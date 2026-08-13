@@ -1,6 +1,6 @@
 
 
-This document is intended to provide a `docker-compose` of the Docker Containers I am using on my Synology DS1513+ home server. If you are using a different device, that should be fine as well, just make sure you define the `$PERSIST` location in your `.env` file that corresponds to the docker folder on your host device.
+This document is intended to provide a `docker-compose` of the Docker Containers I am using on my Synology DS1513+ and 2 Mini PCs as my home server. If you are using a different device, that should be fine as well, just make sure you define the `$PERSIST` location in your `.env` file that corresponds to the docker folder on your host device.
 
 If you are not familiar with how to use a compose file, you can change the compose to docker CLI command by using a [docker-compose Converter](https://bucherfa.github.io/dcc-web/)
  
@@ -31,131 +31,159 @@ Below are some ports that I have found to be reserved and cannot be used on my h
 
 # DATABASES
  
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#adminer">Adminer</a>                                     | 3330            | Full-featured database management tool               | `adminer:latest`                       |
-| <a href="#authelia-redis">Authelia-Redis</a>                       | 6379            | Used for Authelia                                    | `redis:alpine`                         |
-| <a href="#databases-backup">Databases-Backup</a>                   | 6379            | Backups All Redis, MariaDB and Postgres using CRON   | `tiredofit/db-backup:latest`           |
-| <a href="#focalboard-postgres">FocalBoard-Postgres</a>             | -               | Used for FocalBoard                                  | `postgres:alpine`                      |
-| <a href="#immich-redis">Immich-Redis</a>                           | -               | Used for Immich                                      | `redis:alpine`                      |
-| <a href="#immich-postgres">Immich-Postgres</a>                     | -               | Postgres extension provides vector similarity search functions | `tensorchord/pgvecto-rs:pg16-v0.2.0`                      |
-| <a href="#influxdb">InfluxDB</a>                                   | 3004            | Time series database                                 | `influxdb:alpine`                      |
-| <a href="#invidious-postgres">Invidious-Postgres</a>               | -               | Used for Invidious                                   | `postgres:alpine`                      |
-| <a href="#jellystat-postgres">JellyStat-Postgres</a>               | -               | Used for JellyStat                                   | `postgres:15.2`                        |
-| <a href="#loki">Loki</a>                                           | 3002            | Multi-tenant log aggregation system                  | `grafana/loki:latest`                  |
-| <a href="#mariadb">MariaDB</a>                                     | 3306            | MariaDB Database (MySQL Clone)                       | `jbergstroem/mariadb-alpine:10.6.13`   |
-| <a href="#paperless-ngx-postgres">Paperless-NGX-Postgres</a>       | -               | Used for Paperless-NGX                               | `postgres:alpine`                      |
-| <a href="#paperless-ngx-redis">Paperless-NGX-Redis</a>             | -               | Used for Paperless-NGX                               | `redis:alpine`                      |
-| <a href="#promtail">Promtail</a>                                   | -               | Sending log data to Loki                             | `grafana/promtail:latest`              |
-
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#authelia-redis">Authelia-Redis</a>                           | 6379        | Used for Authelia                                           | `redis:alpine`                           |
+| <a href="#bazarr-postgres">Bazarr-Postgres</a>                         | -           | Used for Bazarr                                             | `postgres:18-alpine`                     |
+| <a href="#databases-backup">Databases-Backup</a>                       | 6379        | Backups All Redis, MariaDB and Postgres using CRON          | `tiredofit/db-backup:latest`             |
+| <a href="#dockhand-postgres">DockHand-Postgres</a>                     | -           | Used for DockHand                                           | `postgres:18-alpine`                     |
+| <a href="#homeassistant-mariadb">HomeAssistant-MariaDB</a>             | -           | Used for HomeAssistant                                      | `jbergstroem/mariadb-alpine:latest`      |
+| <a href="#immich-redis">Immich-Redis</a>                               | -           | Used for Immich                                             | `redis:alpine`                           |
+| <a href="#immich-postgres">Immich-Postgres</a>                         | -           | Postgres extension provides vector similarity search functions | `ghcr.io/immich-app/postgres:16-vectorchord0.3.0-pgvectors0.3.0` |
+| <a href="#influxdb">InfluxDB</a>                                       | 3004        | Time series database                                        | `influxdb:alpine`                        |
+| <a href="#invidious-postgres">Invidious-Postgres</a>                   | -           | Used for Invidious                                          | `postgres:alpine`                        |
+| <a href="#loki">Loki</a>                                               | 3002        | Multi-tenant log aggregation system                         | `grafana/loki:latest`                    |
+| <a href="#manyfold-postgres">Manyfold-Postgres</a>                     | -           | Used for Manyfold                                           | `postgres:18-alpine`                     |
+| <a href="#manyfold-redis">Manyfold-Redis</a>                           | -           | Used for Manyfold                                           | `redis:alpine`                           |
+| <a href="#nextcloud-mariadb">NextCloud-MariaDB</a>                     | -           | Used for NextCloud (long-term-support)                      | `mariadb:lts`                            |
+| <a href="#nextcloud-redis">NextCloud-Redis</a>                         | -           | Used for NextCloud                                          | `redis:alpine`                           |
+| <a href="#mariadb">MariaDB</a>                                         | 3306        | MariaDB Database (MySQL Clone)                              | `jbergstroem/mariadb-alpine:10.6.13`     |
+| <a href="#paperless-ngx-postgres">Paperless-NGX-Postgres</a>           | -           | Used for Paperless-NGX                                      | `postgres:16-alpine`                     |
+| <a href="#paperless-ngx-redis">Paperless-NGX-Redis</a>                 | -           | Used for Paperless-NGX                                      | `redis:alpine`                           |
+| <a href="#pastefy-mariadb">Pastefy-MariaDB</a>                         | -           | Used for Pastefy                                            | `jbergstroem/mariadb-alpine:latest`      |
+| <a href="#projectsend-mariadb">ProjectSend-MariaDB</a>                 | -           | Used for ProjectSend                                        | `jbergstroem/mariadb-alpine:latest`      |
+| <a href="#promtail">Promtail</a>                                       | -           | Sending log data to Loki                                    | `grafana/promtail:latest`                |
+| <a href="#prawlarr-postgres">Prawlarr-Postgres</a>                     | -           | Used for Prawlarr                                           | `postgres:18-alpine`                     |
+| <a href="#radarr-postgres">Radarr-Postgres</a>                         | -           | Used for Radarr                                             | `postgres:18-alpine`                     |
+| <a href="#seerr-postgres">Seerr-Postgres</a>                           | -           | Used for Seerr                                              | `postgres:18-alpine`                     |
+| <a href="#sonarr-postgres">Sonarr-Postgres</a>                         | -           | Used for Sonrr                                              | `postgres:18-alpine`                     |
+| <a href="#traccar-mariadb">TracCar-MariaDB</a>                         | 3307        | Used for TracCar                                            | `jbergstroem/mariadb-alpine:latest`      |
+| <a href="#tracearr-postgres">Tracearr-Postgres</a>                     | -           | Used for Tracearr                                           | `timescale/timescaledb-ha:pg18.1-ts2.25.0` |
+| <a href="#tracearr-redis">Tracearr-Redis</a>                           | -           | Used for Tracearr                                           | `redis:alpine`                           |
+ 
 
 
 # DOCKER RELATED
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#diun">Diun</a>                                           | -               | Docker images status monitor and notifier using CRON | `crazymax/diun:latest`                 |
-| <a href="#socket-proxy">Docker Socket Proxy</a>                    | 2375            | A security-enhanced proxy for the Docker Socket      | `tecnativa/docker-socket-proxy:latest` |
-| <a href="#dozzle">Dozzle</a>                                       | 9900            | Container log aggregator                             | `pamir20/dozzle:latest`                |
-| <a href="#duplicati">Duplicati</a>                                 | 8200            | Backup tool for local files (used for docker mainly) | `ghcr.io/imagegenius/duplicati:latest` |
-| <a href="#yopass-memcached">Yopass-MemCached</a>                   | 11211           | General-purpose caching system (mainly for YoPass)   | `memcached:alpine`                     |
-| <a href="#monocker">Monocker</a>                                   | -               | Live MONitor doCKER with notifications               | `petersem/monocker:latest`             |
-| <a href="#portainer-ee">Portainer-EE</a>                           | 9000,9443,8000  | Docker management tool (Business Edition)            | `portainer/portainer-ee:alpine`        |
-| <a href="#watchtower">WatchTower</a>                               | -     | Auto-Update containers with latest images                      | `containrrr/watchtower:latest`         |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#backrest">Backrest</a>                                       | 9898        | A web UI and orchestrator for restic backup                 | `garethgeorge/backrest:latest`           |
+| <a href="#diun">Diun</a>                                               | -           | Docker images status monitor and notifier using CRON        | `crazymax/diun:latest`                   |
+| <a href="#socket-proxy">Docker Socket Proxy</a>                        | 2375        | A security-enhanced proxy for the Docker Socket             | `tecnativa/docker-socket-proxy:latest`   |
+| <a href="#dockhand">DockHand</a>                                       | 9000        | All-in-One Docker Management Tool replacing Portainer       | `fnsys/dockhand:latest`                  |
+| <a href="#monocker">Monocker</a>                                       | -           | Live MONitor doCKER with notifications                      | `petersem/monocker:latest`               |
+| <a href="#portainer-ee">Portainer-EE</a>                               | 9000,9443,8000 | Docker management tool (Business Edition)                | `portainer/portainer-ee:alpine`          |
+| <a href="#prunemate">PruneMate</a>                                     | 7676        | Docker image & resource cleanup helper, on a schedule!      | `anoniemerd/prunemate:latest`            |
+| <a href="#watchtower">WatchTower</a>                                   | -           | Auto-Update containers with latest images                   | `nickfedor/watchtower:latest`            |
 
 
 
 # LINKS AND PAGE ORGANISATION
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#homarr">Homarr</a>                                       | 5050            | Links manager                                        | `ghcr.io/ajnart/homarr:latest`         |
-| <a href="#linkding">LinkDing</a>                                   | 7461            | A bookmark manager that you can host yourself        | `sissbruecker/linkding:latest-alpine`         |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#homarr">Homarr</a>                                           | 5050        | Links manager                                               | `ghcr.io/homarr-labs/homarr:latest`      |
+| <a href="#karakeep">Karakeep</a>                                       | 3421        | A self-hostable bookmark-everything app with a touch of AI  | `ghcr.io/karakeep-app/karakeep:latest`   |
 
 
 
 # MEDIA PLAYING
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#audiobookshelf">AudioBookShelf</a>                                   | 13378            | Self-hosted audiobook and podcast server                                         | `ghcr.io/advplyr/audiobookshelf:latest`             |
-| <a href="#jellyfin">Jellyfin</a>                                   | 8096            | Media server                                         | `jellyfin/jellyfin:latest`             |
-| <a href="#jellystat">JellyStat</a>                                 | 6555            | Stat web interface for Jellyfin Media server         | `cyfershepard/jellystat:unstable`      |
-| <a href="#navidrome">NaviDrome</a>                                 | 4533            | Web-based music collection server and streamer       | `ghcr.io/navidrome/navidrome:latest`   |
-| <a href="#maloja">Maloja</a>                                       | 42010           | Music scrobble for personal listening statistics     | `krateng/maloja:latest`        |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#audiobookshelf">AudioBookShelf</a>                           | 13378       | Self-hosted audiobook and podcast server                    | `ghcr.io/advplyr/audiobookshelf:latest`  |
+| <a href="#ersatztv">ErsatzTV</a>                                       | 8407        | Transform media library into a personalized live TV experience | `ghcr.io/ersatztv/legacy:latest`      |
+| <a href="#jellyfin">Jellyfin</a>                                       | 8096        | Media server                                                | `jellyfin/jellyfin:latest`               |
+| <a href="#navidrome">NaviDrome</a>                                     | 4533        | Web-based music collection server and streamer              | `ghcr.io/navidrome/navidrome:latest`     |
+| <a href="#maloja">Maloja</a>                                           | 42010       | Music scrobble for personal listening statistics            | `krateng/maloja:latest`                  |
+| <a href="#subsyncarr-plus">SubSyncarr-Plus</a>                         | 3333        | An automated subtitle synchronization tool                  | `tomtomw123/subsyncarr-plus:latest`      |
+| <a href="#tracearr">Tracearr</a>                                       | 3300        | Real-time monitoring for Plex, Jellyfin, and Emby servers   | `ghcr.io/connorgallopo/tracearr:latest`  |
 
 
 
 # NETWORKING AND SECURITY
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#authelia">Authelia</a>                                   | 9091            | 2Factor Authentication                               | `authelia/authelia:latest`             |
-| <a href="#cloudflared">Cloudflared</a>                             | -               | A secure way to publibly connect to local network    | `cloudflare/cloudflared:latest`        |
-| <a href="#cloudflared-mon">Cloudflared-Mon</a>                     | -               | Cloudflare Zero Tunnel health monitor                | `techblog/cloudflared-mon:latest`      |
-| <a href="#dashdot">Dash.</a>                                         | 7512            | Modern server dashboard monitor for the host         | `mauricenino/dashdot:latest`         |
-| <a href="#netalertx">NetAlertX</a>                                     | 20211           | Monitoring WIFI/LAN and alerting of new devices      | `jokobsk/netalertx:latest`              |
-| <a href="#uptime-kuma">Uptime-Kuma</a>                             | 3001            | Monitoring tool for local DNS                        | `louislam/uptime-kuma:latest`          |
-| <a href="#vaultwarden-backup">VaultWarden-Backup</a>               | -               | Backs up database for VaultWarden                    | `bruceforce/vaultwarden-backup:latest` |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#authelia">Authelia</a>                                       | 9091        | 2Factor Authentication                                      | `authelia/authelia:latest`               |
+| <a href="#cloudflared">Cloudflared</a>                                 | -           | A secure way to publibly connect to local network           | `cloudflare/cloudflared:latest`          |
+| <a href="#cloudflared-mon">Cloudflared-Mon</a>                         | -           | Cloudflare Zero Tunnel health monitor                       | `techblog/cloudflared-mon:latest`        |
+| <a href="#dashdot">Dash.</a>                                           | 7512        | Modern server dashboard monitor for the host                | `mauricenino/dashdot:latest`             |
+| <a href="#netalertx">NetAlertX</a>                                     | 20211       | Monitoring WIFI/LAN and alerting of new devices             | `jokobsk/netalertx:latest`               |
+| <a href="#peanut">PeaNUT</a>                                           | 8999        | A tiny dashboard for Network UPS Tools                      | `brandawg93/peanut:latest`               |
+| <a href="#speedtest-tracker">Speedtest-Tracker</a>                     | 8765,8766   | A self-hosted internet performance tracking application     | `lscr.io/linuxserver/speedtest-tracker:latest` |
+| <a href="#uptime-kuma">Uptime-Kuma</a>                                 | 3001        | Monitoring tool for local DNS                               | `louislam/uptime-kuma:latest`            |
+| <a href="#vaultwarden-backup">VaultWarden-Backup</a>                   | -           | Backs up database for VaultWarden                           | `bruceforce/vaultwarden-backup:latest`   |
 
 
 
 # PROGRAMMING
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#code-server">Code-Server</a>                             | 8181            | Visual Studio Code editor                            | `lscr.io/linuxserver/code-server:latest` |
-| <a href="#esphome">ESPHome</a>                                     | 6052,6123       | Programming tool for ESP82 chipsets                  | `ghcr.io/imagegenius/esphome:latest`   |
-| <a href="#mqtt">MQTT</a>                                           | 1883,9001       | Mosquitto broker                                     | `eclipse-mosquitto:latest`   |
-| <a href="#octoprint">OctoPrint</a>                                 | 3015            | A snappy web interface for your 3D printer!          | `octoprint/octoprint:latest`          |
-| <a href="#tasmoadmin">TasmoAdmin</a>                               | 9999            | Manages Sonoff Devices flashed with Tasmota          | `raymondmm/tasmoadmin:latest`          |
-| <a href="#tasmobackup">TasmoBackup</a>                             | 8259            | Backups/manages Sonoff Devices flashed with Tasmota  | `danmed/tasmobackupv1:latest`          |
-| <a href="#zigbee2mqtt">Zigbee2MQTT</a>                             | 9002            | Convert Zigbee protocol to Mosquitto  | `koenkk/zigbee2mqtt:latest`          |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#esphome">ESPHome</a>                                         | 6052,6123   | Programming tool for ESP82 chipsets                         | `esphome/esphome:latest`                 |
+| <a href="#flaresolverr">FlareSolverr</a>                               | 8191        | A proxy server to bypass Cloudflare and DDoS-GUARD protection | `ghcr.io/flaresolverr/flaresolverr:latest` |
+| <a href="#karakeep-meilisearch">Karakeep-MeiliSearch</a>               | 7700        | A lightning-fast search engine                              | `getmeili/meilisearch:v1.13.3`           |
+| <a href="#jellysearch-meilisearch">JellySearch-MeiliSearch</a>         | 7700        | A lightning-fast search engine                              | `getmeili/meilisearch:v1.33.3`           |
+| <a href="#mqtt">MQTT</a>                                               | 1883,9001   | Mosquitto broker                                            | `eclipse-mosquitto:latest`               |
+| <a href="#octoprint">OctoPrint</a>                                     | 3015        | A snappy web interface for your 3D printer!                 | `octoprint/octoprint:latest`             |
+| <a href="#tasmoadmin">TasmoAdmin</a>                                   | 9999        | Manages Sonoff Devices flashed with Tasmota                 | `raymondmm/tasmoadmin:latest`            |
+| <a href="#tasmobackup">TasmoBackup</a>                                 | 8259        | Backups/manages Sonoff Devices flashed with Tasmota         | `danmed/tasmobackupv1:latest`            |
+| <a href="#vscodium-web">VSCodium-Web</a>                               | 8000        | Visual Studio Code editor                                   | `lscr.io/linuxserver/vscodium-web:latest` |
+| <a href="#zigbee2mqtt">Zigbee2MQTT</a>                                 | 9002        | Convert Zigbee protocol to Mosquitto                        | `koenkk/zigbee2mqtt:latest`              |
 
 
 
 # SYSTEM MONITORING AND MANAGEMENT
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#cloud-commander">Cloud Commander</a>                     | 4569            | A file manager for the web with console and editor   | `coderaiser/cloudcmd:latest-alpine`    |
-| <a href="#homeassistant">HomeAssistant</a>                         | 8123            | Smart home monitoring and management                 | `ghcr.io/home-assistant/home-assistant:stable`|
-| <a href="#scrutiny">Scrutiny</a>                                   | 6080            | WebUI for S.M.A.R.T monitoring                       | `ghcr.io/analogj/scrutiny:master-omnibus` |
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#filebrowser">FileBrowser</a>                                 | 7888        | A modern web-based file browser                             | `gtstef/filebrowser:stable`              |
+| <a href="#homeassistant">HomeAssistant</a>                             | 8123        | Smart home monitoring and management                        | `ghcr.io/home-assistant/home-assistant:stable` |
 
 
 
 # SELF-HOSTED
 
-| Container                                                          | Port            | Description                                          | Docker Image                           |
-| :------------                                                      | :----           | :-------                                             | :---                                   |
-| <a href="#apprise">Apprise</a>                                     | 8001            | Push notification using POST                         | `lscr.io/linuxserver/apprise-api:latest` |
-| <a href="#excalidraw">ExcaliDraw</a>                               | 3765            | Virtual whiteboard for sketching hand-drawn like diagrams | `excalidraw/excalidraw:latest`    |
-| <a href="#focalboard">FocalBoard</a>                               | 5374            | A project management tool                            | `mattermost/focalboard:latest`         |
-| <a href="#gitea">Gitea</a>                                         | 222,3333        | Git with a cup of tea!                               | `gitea/gitea:latest`                   |
-| <a href="#hauk">Hauk</a>                                           | 9435            | A fully open source self-hosted location sharing service | `bilde2910/hauk:latest`   |
-| <a href="#immich">Immich</a>                                       | 8212            | A high performance self-hosted photo and video backup solution      | `ghcr.io/immich-app/immich-server:release`   |
-| <a href="#immich-folder-album-creator">Immich Folder Album Creator</a> | -           | Automatically create albums in Immich from a folder structure       | `salvoxia/immich-folder-album-creator:latest`   |
-| <a href="#immich-machine-learning">Immich-Machine-Learning</a> | -                   | ML that alleviate performance issues on low-memory systems          | `ghcr.io/immich-app/immich-machine-learning:release`   |
-| <a href="#immich-microservices">Immich-Microservices</a> | -                         | Used for Facial Detection and Recognition                           | `ghcr.io/immich-app/immich-server:release`   |
-| <a href="#invidious">Invidious</a>                                 | 7601            | An open source alternative front-end to YouTube      | `quay.io/invidious/invidious:latest`   |
-| <a href="#kavita">Kavita</a>                                 | 8778            | A rocket fueled self-hosted digital library for ebook      | `jvmilazz0/kavita:latest`   |
-| <a href="#librey">LibreY</a>                                       | 8245            | Free privacy respecting meta search engine Google Alternative | `ghcr.io/ahwxorg/librey:latest` |
-| <a href="#metube">MeTube</a>                                       | 8081            | Web GUI for youtube-dl with playlist support         | `ghcr.io/alexta69/metube:latest`       |
-| <a href="#mozhi">Mozhi</a>                                         | 6455            | An alternative frontend for many translation engines | `codeberg.org/aryak/mozhi:latest`       |
-| <a href="#paperless-ngx">Paperless-NGX</a>                         | 8777            | A document management system                         | `ghcr.io/paperless-ngx/paperless-ngx:latest`       |
-| <a href="#paperless-ngx-gotenberg">Paperless-NGX-Gotenberg</a>     | -               | API for converting numerous document formats into PDF files | `gotenberg/gotenberg:latest`       |
-| <a href="#paperless-ngx-tika">Paperless-NGX-Tika</a>               | -               | Detects and extracts metadata/text for different file types | `ghcr.io/paperless-ngx/tika:latest`       |
-| <a href="#pastefy">PasteFy</a>                                     | 9980            | Pastebin                                             | `interaapps/pastefy:latest`            |
-| <a href="#projectsend">ProjectSend</a>                             | 8516            | Clients-oriented, private file sharing web application | `lscr.io/linuxserver/projectsend:latest` |
-| <a href="#qr-code">QR Code</a>                                     | 8895            | UI to generate a QR Code from a provided URL         | `bizzycolah/qrcode-generator:latest`   |
-| <a href="#squoosh">Squoosh</a>                                     | 7701            | Ultimate image optimiser with compress and compare   | `dko0/squoosh:latest`                  |
-| <a href="#syncthing">SyncThing</a>                                 | 8384            | Syncing platfrom between Mobile-NAS                  | `syncthing/syncthing:1.26 `            |
-| <a href="#traccar">TracCar</a>                                     | 8082,5055       | GPS Tracking System                                  | `traccar/traccar:alpine`               |
-| <a href="#vaultwarden">VaultWarden</a>                             | 8089,3012       | Password management application                      | `vaultwarden/server:alpine`            |
-| <a href="#wiznote">WizNote</a>                                     | 5641,9269       | Save notes or share documents with your colleagues   | `wiznote/wizserver:latest`                 |
-| <a href="#yopass">YoPass</a>                                       | 8180            | Share Secrets Securely                               | `jhaals/yopass:latest`                 |
-
-
+| Container                                                              | Port        | Description                                                 | Docker Image                             |
+| :------------                                                          | :----       | :-------                                                    | :---                                     |
+| <a href="#apprise">Apprise</a>                                         | 8001        | Push notification using POST                                | `lscr.io/linuxserver/apprise-api:latest` |
+| <a href="#bazarr">Bazarr</a>                                           | 6767        | Automating subtitles requests                               | `lscr.io/linuxserver/bazarr:latest`      |
+| <a href="#checkrr">Checkrr</a>                                         | 8585        | Scans your library files for corrupt media                  | `aetaric/checkrr:latest`                 |
+| <a href="#degoog">DeGoog</a>                                           | 4444        | Search aggregator that queries multiple engines             | `ghcr.io/fccview/degoog:latest`          |
+| <a href="#dumbassets">DumbAssets</a>                                   | 3000        | Asset tracker for physical assets, components, and warranties | `dumbwareio/dumbassets:latest`         |
+| <a href="#excalidraw">ExcaliDraw</a>                                   | 3765        | Virtual whiteboard for sketching hand-drawn like diagrams   | `excalidraw/excalidraw:latest`           |
+| <a href="#gotify">Gotify</a>                                           | 9999        | A self-hosted push notification service replacing Pushover  | `gotify/server:latest`                   |
+| <a href="#hauk">Hauk</a>                                               | 9435        | A fully open source self-hosted location sharing service    | `bilde2910/hauk:latest`                  |
+| <a href="#immich">Immich</a>                                           | 8212        | A high performance self-hosted photo and video backup solution | `ghcr.io/immich-app/immich-server:release` |
+| <a href="#immich-folder-album-creator">Immich Folder Album Creator</a> | -           | Automatically create albums in Immich from a folder structure  | `salvoxia/immich-folder-album-creator:latest` |
+| <a href="#immich-machine-learning">Immich-Machine-Learning</a>         | -           | ML that alleviate performance issues on low-memory systems  | `ghcr.io/immich-app/immich-machine-learning:release` |
+| <a href="#kavita">Kavita</a>                                           | 8778        | A rocket fueled self-hosted digital library for ebook       | `jvmilazz0/kavita:latest`                |
+| <a href="#manyfold">Manyfold</a>                                       | 7214        | Web application for managing a collection of 3D models      | `ghcr.io/manyfold3d/manyfold:latest`     |
+| <a href="#mozhi">Mozhi</a>                                             | 6455        | An alternative frontend for many translation engines        | `codeberg.org/aryak/mozhi:latest`        |
+| <a href="#nextcloud">NextCloud</a>                                     | 8082        | A safe home for all your data                               | `nextcloud:latest`                       |
+| <a href="#nextcloud">NextCloud-Cron</a>                                | -           | Apache Web server for NextCloud                             | `nextcloud:apache`                       |
+| <a href="#pairdrop">PairDrop</a>                                       | 3005        | Local file sharing in your web browser inspired by AirDrop  | `lscr.io/linuxserver/pairdrop:latest`    |
+| <a href="#paperless-ngx">Paperless-NGX</a>                             | 8777        | A document management system                                | `ghcr.io/paperless-ngx/paperless-ngx:latest` |
+| <a href="#paperless-ngx-gotenberg">Paperless-NGX-Gotenberg</a>         | -           | API for converting numerous document formats into PDF files | `gotenberg/gotenberg:latest`             |
+| <a href="#paperless-ngx-tika">Paperless-NGX-Tika</a>                   | -           | Detects and extracts metadata/text for different file types | `docker.io/apache/tika:latest`           |
+| <a href="#pastefy">PasteFy</a>                                         | 9980        | Pastebin                                                    | `interaapps/pastefy:latest`              |
+| <a href="#projectsend">ProjectSend</a>                                 | 8516        | Clients-oriented, private file sharing web application      | `lscr.io/linuxserver/projectsend:latest` |
+| <a href="#prowlarr">Prowlarr</a>                                       | 9696        | Indexer manager/proxy to integrate with your various PVR apps | `lscr.io/linuxserver/prowlarr:latest`  |
+| <a href="#qr-code">QR Code</a>                                         | 8895        | UI to generate a QR Code from a provided URL (supports Wifi SSID) | `bizzycolah/qrcode-generator:latest` |
+| <a href="#quillnote-server">Quillnote-Server</a>                       | 3020        | Self hosated and deployed NextCloud DB server for Quillpad  | `arunk140/quillnote-server`              |
+| <a href="#radarr">Radarr</a>                                           | 7878        | Automating movies requests                                  | `lscr.io/linuxserver/radarr:latest`      |
+| <a href="#seerr">Seerr</a>                                             | 5055        | Managing requests for your media library                    | `ghcr.io/seerr-team/seerr:latest`        |
+| <a href="#sonarr">Sonarr</a>                                           | 8989        | Automating TV shows requests                                | `lscr.io/linuxserver/sonarr:latest`      |
+| <a href="#squoosh">Squoosh</a>                                         | 7701        | Ultimate image optimiser with compress and compare          | `dko0/squoosh:latest`                    |
+| <a href="#syncthing">SyncThing</a>                                     | 8384        | Syncing platfrom between Mobile-NAS                         | `syncthing/syncthing:1.26`               |
+| <a href="#smtp-to-gotify">SMTP-to-Gotify</a>                           | 2525        | Forwards SMTP messages (emails) to Gotify (mainly used for Synology) | `imoshtokill/smtp-to-gotify-docker:latest` |
+| <a href="#tinymediamanager">TinyMediaManager</a>                       | 4000,5900   |Organize movie and TV show collections                       | `tinymediamanager/tinymediamanager:latest` |
+| <a href="#traccar">TracCar</a>                                         | 8082,5055   | GPS Tracking System                                         | `traccar/traccar:alpine`                 |
+| <a href="#transmission">Transmission</a>                               | 9091        | A lightweight BitTorrent client                             | `lscr.io/linuxserver/transmission:latest` |
+| <a href="#vaultwarden">VaultWarden</a>                                 | 8089,3012   | Password management application                             | `vaultwarden/server:alpine`              |
+| <a href="#wdosg">wDOSg</a>                                             | 3003        | (web DOS games) Centralized DOS game library                | `soulraven1980/wdosg:latest`             |
+| <a href="#ytptube">YTPTube</a>                                         | 8081        | A WebUI for yt-dlp with concurrent downloads support        | `ghcr.io/arabcoders/ytptube:latest`      |
 
 
 
@@ -203,36 +231,11 @@ You can add them to each file separately if needed. I assume that you will be us
 ```
 version: '3'
 
+# name: $STACK_NAME
+
 services:
 ```
 
-# Adminer
-
-<details>
-  <summary>
-  </summary>
-
-```
-  adminer:
-    container_name: adminer
-    restart: $RESTART_POLICY
-    hostname: adminer
-    environment:
-      ADMINER_DEFAULT_DB_DRIVER: mysql
-      ADMINER_DEFAULT_SERVER: mariadb #172.18.0.5 #mariadb ip address
-      ADMINER_DESIGN: 'nette' #'esterka'
-      ADMINER_PLUGINS: 'tables-filter tinymce frames'
-    ports:
-      - 3330:8080
-    networks:
-      my_bridge:
-    depends_on:
-      - mariadb
-    image: 'adminer:latest'
-```
-</details>
-
-[🔼 Back to top](#databases)
 
 
 # AppRise
@@ -315,14 +318,9 @@ services:
     depends_on:
       authelia-redis:
         condition: service_started
-      # - mariadb #enable if using mariadb in config.yaml
     labels: 
       monocker.enable: $MONOCKER_ENABLE
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://$LOCAL_HOST:3002/loki/api/v1/push"
-    image: 'authelia/authelia:latest' #4.36'
+    image: 'authelia/authelia:latest'
 ```
 </details>
 
@@ -362,33 +360,139 @@ services:
 [🔼 Back to top](#databases)
 
 
-# Cloud Commander
+# Backrest
 <details>
   <summary>
   </summary>
 
 ```
-  cloudcmd:
-    container_name: cloudcmd
+  backrest:
+    container_name: backrest
     restart: $RESTART_POLICY
-    hostname: cloudcmd
+    hostname: backrest
     environment:
-      NAME: "Tamimology"
+      - BACKREST_DATA=/data
+      - BACKREST_CONFIG=/config/config.json
+      - XDG_CACHE_HOME=/cache
+      - TMPDIR=/tmp
+      - TZ=$TZ
+      - DOCKER_HOST=$DOCKER_HOST
+      - RESTIC_PASSWORD=$RESTIC_PASSWORD
+      - ISSUE_1139_FIX_PASSWORDS=true # https://github.com/garethgeorge/backrest/issues/1139
     volumes:
-      - /volume1/:/volume1
-      - /volumeUSB1/:/USB1
-      # - /:/mnt/fs
-    working_dir: /volume1
-    tty: true
+      - $PERSIST/backrest/data:/data
+      - $PERSIST/backrest/config:/config
+      - $PERSIST/backrest/cache:/cache
+      - $PERSIST/backrest/tmp:/tmp
+      - $PERSIST:/docker_volumes:ro # Mount local paths to backup
+      - $PERSIST/backrest/restores:/restores # Mount for restored content
+      - $BACKUPS:/repos # Mount local repos (optional for remote storage)
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - 4569:8000
+      - 9898:9898
     networks:
       my_bridge:
-    image: 'coderaiser/cloudcmd:latest-alpine'
+    image: 'garethgeorge/backrest:latest'
 ```
 </details>
 
-[🔼 Back to top](#system-monitoring-and-management)
+[🔼 Back to top](#docker-related)
+
+
+# Bazarr
+<details>
+  <summary>
+  </summary>
+
+```
+  bazarr:
+    container_name: bazarr
+    restart: $RESTART_POLICY
+    hostname: bazarr
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - POSTGRES_ENABLED=true
+      - POSTGRES_HOST=bazarr-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=bazarr
+      - POSTGRES_USERNAME=bazarruser
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+    volumes:
+      - $PERSIST/bazarr/config:/config
+      - $MEDIA_PATH/Movies/English:/movies #optional
+      - $MEDIA_PATH/Shows/English:/tv #optional
+    ports:
+      - 6767:6767
+    networks:
+      my_bridge:
+    depends_on:
+      bazarr-postgres:
+          condition: service_healthy
+    image: 'lscr.io/linuxserver/bazarr:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# Bazarr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  bazarr-postgres:
+    container_name: bazarr-postgres
+    hostname: bazarr-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: bazarr
+      POSTGRES_USER: bazarruser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/bazarr/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    labels: 
+      com.centurylinklabs.watchtower.enable: false
+      com.centurylinklabs.watchtower.monitor-only: true
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "bazarr", "-U", "bazarruser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Checkrr
+<details>
+  <summary>
+  </summary>
+
+```
+  checkrr:
+    container_name: checkrr
+    restart: $RESTART_POLICY
+    hostname: checkrr
+    volumes:
+      - $PERSIST/checkrr/checkrr.yaml:/etc/checkrr.yaml
+      - $PERSIST/checkrr/checkrr.db:/checkrr.db
+      - $MEDIA_PATH:/media
+    ports:
+      - 8585:8585
+    networks:
+      my_bridge:
+    image: 'aetaric/checkrr:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
 
 
 # CloudFlared
@@ -445,37 +549,6 @@ services:
 [🔼 Back to top](#networking-and-security)
 
 
-# Code-Server
-<details>
-  <summary>
-  </summary>
-
-```
-  code-server:
-    container_name: code-server
-    restart: $RESTART_POLICY
-    hostname: code-server
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
-      - SUDO_PASSWORD_HASH=$PASSWORD_HASH #https://www.symbionts.de/tools/hash/sha256-hash-salt-generator.html
-      - PROXY_DOMAIN=code-server.$DOMAINNAME
-      - DEFAULT_WORKSPACE=/home/coder/project #optional
-    volumes:
-      - $PERSIST/code-server:/config
-      - $PERSIST/homeassistant:/home/coder/project:rw
-    ports:
-      - 8181:8443
-    networks:
-      my_bridge:
-    image: 'lscr.io/linuxserver/code-server:latest'
-```
-</details>
-
-[🔼 Back to top](#programming)
-
-
 # DashDot
 <details>
   <summary>
@@ -489,7 +562,7 @@ services:
     environment:
       - DASHDOT_SHOW_HOST=true
       #- DASHDOT_ENABLE_STORAGE_SPLIT_VIEW=true #all drives must be mounted in the container
-      - DASHDOT_PAGE_TITLE=Tamimology Server Monitor
+      - DASHDOT_PAGE_TITLE=My Server Monitor
       #- DASHDOT_ACCEPT_OOKLA_EULA=true
       #- DASHDOT_USE_NETWORK_INTERFACE=bond0 # use (ifconfig -a | sed 's/[ \t].*//;/^$/d') in SSH
       - DASHDOT_ENABLE_CPU_TEMPS=true
@@ -539,12 +612,12 @@ services:
       - SMTP_HOST=$GM_HOST
       - SMTP_PORT=$GM_PORT
 
-    # authelia-redis-backup
+    # redis-backup
       - DB01_TYPE=redis
-      - DB01_HOST=authelia-redis
+      - DB01_HOST=redisdb
       - DB01_PORT=6379
       - DB01_BACKUP_LOCATION=FILESYSTEM
-      - DB01_FILESYSTEM_PATH=/backup/redis/authelia
+      - DB01_FILESYSTEM_PATH=/backup/redis/
       - DB01_BACKUP_INTERVAL=1440 #once per day
       - DB01_BACKUP_BEGIN="2355" # @23:55 midnight
       - DB01_CLEANUP_TIME=8640 # keep for 6 days
@@ -554,15 +627,15 @@ services:
       - DB01_SPLIT_DB=false
       - DB01_MYSQL_SINGLE_TRANSACTION=true
 
-    # homeassistant-mariadb-backup
+    # mariadb-backup
       - DB02_TYPE=mariadb
       - DB02_HOST=mariadb
       - DB02_PORT=3306
-      - DB02_NAME=homeassistant
-      - DB02_USER=homeassistant
+      - DB02_NAME=mariadb-name
+      - DB02_USER=mariadbuser
       - DB02_PASS=$DB_PASSWORD
       - DB02_BACKUP_LOCATION=FILESYSTEM
-      - DB02_FILESYSTEM_PATH=/backup/mariadb/homeassistant
+      - DB02_FILESYSTEM_PATH=/backup/mariadb/
       - DB02_BACKUP_INTERVAL=1440 #once per day
       - DB02_BACKUP_BEGIN="0000" # @00:00 midnight
       - DB02_CLEANUP_TIME=8640 # keep for 6 days
@@ -572,230 +645,31 @@ services:
       - DB02_SPLIT_DB=false
       - DB02_MYSQL_SINGLE_TRANSACTION=true
 
-    # mariadb-sys-backup
-      - DB03_TYPE=mariadb
-      - DB03_HOST=mariadb
-      - DB03_PORT=3306
-      - DB03_NAME=all
-      - DB03_NAME_EXCLUDE=homeassistant,pastefy,projectsend,traccar,tasmobackupdb
-      - DB03_USER=root
+    # postgres-backup
+      - DB03_TYPE=pgsql
+      - DB03_HOST=postgresdb
+      - DB03_USER=postgres-user
+      - DB03_AUTH=postgres-user
       - DB03_PASS=$DB_PASSWORD
+      - DB03_NAME=postgresdb
       - DB03_BACKUP_LOCATION=FILESYSTEM
-      - DB03_FILESYSTEM_PATH=/backup/mariadb/sys
+      - DB03_FILESYSTEM_PATH=/backup/postgres/
+      - DB03_SPLIT_DB=false
       - DB03_BACKUP_INTERVAL=1440 #once per day
-      - DB03_BACKUP_BEGIN="0005" # @00:05 midnight
+      - DB03_BACKUP_BEGIN="0030" # @00:30 midnight
       - DB03_CLEANUP_TIME=8640 # keep for 6 days
-      - DB03_CHECKSUM=SHA1
       - DB03_COMPRESSION=ZSTD
       - DB03_COMPRESSION_LEVEL=10
-      - DB03_SPLIT_DB=false
+      - DB03_CHECKSUM=SHA1
       - DB03_MYSQL_SINGLE_TRANSACTION=true
-
-    # pastefy-mariadb-backup
-      - DB04_TYPE=mariadb
-      - DB04_HOST=mariadb
-      - DB04_PORT=3306
-      - DB04_NAME=pastefy
-      - DB04_USER=pastefy
-      - DB04_PASS=$DB_PASSWORD
-      - DB04_BACKUP_LOCATION=FILESYSTEM
-      - DB04_FILESYSTEM_PATH=/backup/mariadb/pastefy
-      - DB04_BACKUP_INTERVAL=1440 #once per day
-      - DB04_BACKUP_BEGIN="0010" # @00:10 midnight
-      - DB04_CLEANUP_TIME=8640 # keep for 6 days
-      - DB04_CHECKSUM=SHA1
-      - DB04_COMPRESSION=ZSTD
-      - DB04_COMPRESSION_LEVEL=10
-      - DB04_SPLIT_DB=false
-      - DB04_MYSQL_SINGLE_TRANSACTION=true
-
-    # projectsend-mariadb-backup
-      - DB05_TYPE=mariadb
-      - DB05_HOST=mariadb
-      - DB05_PORT=3306
-      - DB05_NAME=projectsend
-      - DB05_USER=projectsend
-      - DB05_PASS=$DB_PASSWORD
-      - DB05_BACKUP_LOCATION=FILESYSTEM
-      - DB05_FILESYSTEM_PATH=/backup/mariadb/projectsend
-      - DB05_BACKUP_INTERVAL=1440 #once per day
-      - DB05_BACKUP_BEGIN="0015" # @00:15 midnight
-      - DB05_CLEANUP_TIME=8640 # keep for 6 days
-      - DB05_CHECKSUM=SHA1
-      - DB05_COMPRESSION=ZSTD
-      - DB05_COMPRESSION_LEVEL=10
-      - DB05_SPLIT_DB=false
-      - DB05_MYSQL_SINGLE_TRANSACTION=true
-
-    # traccar-mariadb-backup
-      - DB06_TYPE=mariadb
-      - DB06_HOST=mariadb
-      - DB06_PORT=3306
-      - DB06_NAME=traccar
-      - DB06_USER=traccar
-      - DB06_PASS=$DB_PASSWORD
-      - DB06_BACKUP_LOCATION=FILESYSTEM
-      - DB06_FILESYSTEM_PATH=/backup/mariadb/traccar
-      - DB06_BACKUP_INTERVAL=1440 #once per day
-      - DB06_BACKUP_BEGIN="0020" # @00:20 midnight
-      - DB06_CLEANUP_TIME=8640 # keep for 6 days
-      - DB06_CHECKSUM=SHA1
-      - DB06_COMPRESSION=ZSTD
-      - DB06_COMPRESSION_LEVEL=10
-      - DB06_SPLIT_DB=false
-      - DB06_MYSQL_SINGLE_TRANSACTION=true
-
-    # tasmobackup-mariadb-backup
-      - DB07_TYPE=mariadb
-      - DB07_HOST=mariadb
-      - DB07_PORT=3306
-      - DB07_NAME=tasmobackupdb
-      - DB07_USER=tasmobackup
-      - DB07_PASS=$DB_PASSWORD
-      - DB07_BACKUP_LOCATION=FILESYSTEM
-      - DB07_FILESYSTEM_PATH=/backup/mariadb/tasmobackup
-      - DB07_BACKUP_INTERVAL=1440 #once per day
-      - DB07_BACKUP_BEGIN="0025" # @00:25 midnight
-      - DB07_CLEANUP_TIME=8640 # keep for 6 days
-      - DB07_CHECKSUM=SHA1
-      - DB07_COMPRESSION=ZSTD
-      - DB07_COMPRESSION_LEVEL=10
-      - DB07_SPLIT_DB=false
-      - DB07_MYSQL_SINGLE_TRANSACTION=true
-
-    # invidious-postgres-backup
-      - DB08_TYPE=pgsql
-      - DB08_HOST=invidious-postgres
-      - DB08_USER=invidious
-      - DB08_AUTH=invidious
-      - DB08_PASS=$DB_PASSWORD
-      - DB08_NAME=invidious
-      - DB08_BACKUP_LOCATION=FILESYSTEM
-      - DB08_FILESYSTEM_PATH=/backup/postgres/invidious
-      - DB08_SPLIT_DB=false
-      - DB08_BACKUP_INTERVAL=1440 #once per day
-      - DB08_BACKUP_BEGIN="0030" # @00:30 midnight
-      - DB08_CLEANUP_TIME=8640 # keep for 6 days
-      - DB08_COMPRESSION=ZSTD
-      - DB08_COMPRESSION_LEVEL=10
-      - DB08_CHECKSUM=SHA1
-      - DB08_MYSQL_SINGLE_TRANSACTION=true
-
-    # jellystat-postgres-backup
-      - DB09_TYPE=pgsql
-      - DB09_HOST=jellystat-postgres
-      - DB09_USER=jellystat
-      - DB09_AUTH=jellystat
-      - DB09_PASS=$DB_PASSWORD
-      - DB09_NAME=jfstat
-      - DB09_BACKUP_LOCATION=FILESYSTEM
-      - DB09_FILESYSTEM_PATH=/backup/postgres/jellystat
-      - DB09_SPLIT_DB=false
-      - DB09_BACKUP_INTERVAL=1440 #once per day
-      - DB09_BACKUP_BEGIN="0035" # @00:35 midnight
-      - DB09_CLEANUP_TIME=8640 # keep for 6 days
-      - DB09_COMPRESSION=ZSTD
-      - DB09_COMPRESSION_LEVEL=10
-      - DB09_CHECKSUM=SHA1
-      - DB09_MYSQL_SINGLE_TRANSACTION=true
-
-    # focalboard-postgres-backup
-      - DB10_TYPE=pgsql
-      - DB10_HOST=focalboard-postgres
-      - DB10_USER=focalboard
-      - DB10_AUTH=focalboard
-      - DB10_PASS=$DB_PASSWORD
-      - DB10_NAME=focalboard
-      - DB10_BACKUP_LOCATION=FILESYSTEM
-      - DB10_FILESYSTEM_PATH=/backup/postgres/focalboard
-      - DB10_SPLIT_DB=false
-      - DB10_BACKUP_INTERVAL=1440 #once per day
-      - DB10_BACKUP_BEGIN="0040" # @00:40 midnight
-      - DB10_CLEANUP_TIME=8640 # keep for 6 days
-      - DB10_COMPRESSION=ZSTD
-      - DB10_COMPRESSION_LEVEL=10
-      - DB10_CHECKSUM=SHA1
-      - DB10_MYSQL_SINGLE_TRANSACTION=true
-
-    # # paperless-ngx-postgres-backup
-      - DB11_TYPE=pgsql
-      - DB11_HOST=paperless-ngx-postgres
-      - DB11_USER=paperless
-      - DB11_AUTH=paperless
-      - DB11_PASS=$DB_PASSWORD
-      - DB11_NAME=paperless
-      - DB11_BACKUP_LOCATION=FILESYSTEM
-      - DB11_FILESYSTEM_PATH=/backup/postgres/paperless
-      - DB11_SPLIT_DB=false
-      - DB11_BACKUP_INTERVAL=1440 #once per day
-      - DB11_BACKUP_BEGIN="0045" # @00:45 midnight
-      - DB11_CLEANUP_TIME=8640 # keep for 6 days
-      - DB11_COMPRESSION=ZSTD
-      - DB11_COMPRESSION_LEVEL=10
-      - DB11_CHECKSUM=SHA1
-      - DB11_MYSQL_SINGLE_TRANSACTION=true
-
-    # paperless-ngx-redis-backup
-      - DB12_TYPE=redis
-      - DB12_HOST=paperless-ngx-redis
-      - DB12_USER=paperless
-      - DB12_AUTH=paperless
-      - DB12_PASS=$DB_PASSWORD
-      - DB12_PORT=6379
-      - DB12_BACKUP_LOCATION=FILESYSTEM
-      - DB12_FILESYSTEM_PATH=/backup/redis/paperless
-      - DB12_BACKUP_INTERVAL=1440 #once per day
-      - DB12_BACKUP_BEGIN="0050" # @00:50 midnight
-      - DB12_CLEANUP_TIME=8640 # keep for 6 days
-      - DB12_CHECKSUM=SHA1
-      - DB12_COMPRESSION=ZSTD
-      - DB12_COMPRESSION_LEVEL=10
-      - DB12_SPLIT_DB=false
-      - DB12_MYSQL_SINGLE_TRANSACTION=true
-
-    # immich-redis-backup
-      - DB13_TYPE=redis
-      - DB13_HOST=immich-redis
-      - DB13_PORT=6379
-      - DB13_BACKUP_LOCATION=FILESYSTEM
-      - DB13_FILESYSTEM_PATH=/backup/redis/immich
-      - DB13_BACKUP_INTERVAL=1440 #once per day
-      - DB13_BACKUP_BEGIN="0055" # @00:55 midnight
-      - DB13_CLEANUP_TIME=8640 # keep for 6 days
-      - DB13_CHECKSUM=SHA1
-      - DB13_COMPRESSION=ZSTD
-      - DB13_COMPRESSION_LEVEL=10
-      - DB13_SPLIT_DB=false
-      - DB13_MYSQL_SINGLE_TRANSACTION=true
-
-    # # immich-postgres-backup
-      - DB14_TYPE=pgsql
-      - DB14_HOST=immich-postgres
-      - DB14_USER=immichuser
-      - DB14_AUTH=immich
-      - DB14_PASS=$DB_PASSWORD
-      - DB14_NAME=immich
-      - DB14_BACKUP_LOCATION=FILESYSTEM
-      - DB14_FILESYSTEM_PATH=/backup/postgres/immich
-      - DB14_SPLIT_DB=false
-      - DB14_BACKUP_INTERVAL=1440 #once per day
-      - DB14_BACKUP_BEGIN="0100" # @01:00 midnight
-      - DB14_CLEANUP_TIME=8640 # keep for 6 days
-      - DB14_COMPRESSION=ZSTD
-      - DB14_COMPRESSION_LEVEL=10
-      - DB14_CHECKSUM=SHA1
-      - DB14_MYSQL_SINGLE_TRANSACTION=true
 
     networks:
       my_bridge:
     links:
-     - authelia-redis
-     - mariadb
-     - invidious-postgres
-     - jellystat-postgres
-     - focalboard-postgres
+      - redisdb
+      - mariadb
+      - postgresdb
     labels: 
-      # autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
     image: 'tiredofit/db-backup:latest'
 ```
@@ -831,84 +705,121 @@ services:
 [🔼 Back to top](#docker-related)
 
 
-# Dozzle
+# DeGoog
 <details>
   <summary>
   </summary>
 
 ```
-  dozzle:
-    container_name: dozzle
+  degoog:
+    container_name: degoog
+    hostname: degoog
     restart: $RESTART_POLICY
-    hostname: dozzle
-    environment:
-      DOCKER_HOST: $DOCKER_HOST
-      DOZZLE_LEVEL: info
-      DOZZLE_TAILSIZE: 300
-      DOZZLE_FILTER: "status=running"
-      DOZZLE_USERNAME: admin
-      DOZZLE_PASSWORD: $DOZZLE_PWD
-      # DOZZLE_FILTER: "label=log_me" # limits logs displayed to containers with this label
-    # volumes:
-    #   - $DOCKER_SOCKET:/var/run/docker.sock
+    volumes:
+      - $PERSIST/degoog:/app/data
     ports:
-      - 9900:8080
+      - 4444:4444
+    networks:
+      my_bridge:
+    image: 'ghcr.io/fccview/degoog:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# DockHand
+<details>
+  <summary>
+  </summary>
+
+```
+  dockhand:
+    container_name: dockhand
+    hostname: dockhand
+    restart: $RESTART_POLICY
+    environment:
+      TZ: $TZ
+      DOCKER_HOST: $DOCKER_HOST
+      DATABASE_URL: postgres://dockhand:$DB_PASSWORD@dockhand-postgres:5432/dockhand
+    volumes:
+      # - /var/run/docker.sock:/var/run/docker.sock
+      - $PERSIST/dockhand/data:/app/data
+    networks:
+      my_bridge:
+    ports:
+      - 9000:3000
+    depends_on:
+      - dockhand-postgres
+    image: 'fnsys/dockhand:latest'
+```
+</details>
+
+[🔼 Back to top](#docker-related)
+
+
+# DockHand-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  dockhand-postgres:
+    container_name: dockhand-postgres
+    hostname: dockhand-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_USER: dockhand
+      POSTGRES_DB: dockhand
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/dockhand/db:/var/lib/postgresql:rw
     networks:
       my_bridge:
     healthcheck:
-      test: [ "CMD", "/dozzle", "healthcheck" ]
-      interval: 3s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-    image: 'amir20/dozzle:latest'
+      test: ["CMD", "pg_isready", "-q", "-d", "dockhand", "-U", "dockhand"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
 ```
 </details>
 
-[🔼 Back to top](#docker-related)
+[🔼 Back to top](#databases)
 
 
-# Duplicati
+# DumbAssets
 <details>
   <summary>
   </summary>
 
 ```
-  duplicati:
-    container_name: duplicati
-    restart: $ALWAYS_ON_POLICY
-    hostname: duplicati
+  dumbassets:
+    container_name: dumbassets
+    restart: $RESTART_POLICY
+    hostname: dumbassets
     environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
-      # https://forum.duplicati.com/t/how-to-configure-automatic-email-notifications-via-gmail-for-every-backup-job/869/19
-      - CLI_ARGS= --send-mail-url=smtp://$GM_HOST:587/?starttls=when-available
-                  --send-mail-any-operation=true
-                  --send-mail-subject=Duplicati %PARSEDRESULT%, %OPERATIONNAME% report for %backup-name%
-                  --send-mail-to=$PUSHOVER_EMAIL_DUPLICATI
-                  --send-mail-username=$GM_USER
-                  --send-mail-password=$GM_PSW
-                  --send-mail-from=Tamimology Server <$GM_USER>
-                  --send-mail-level=Success,Error
-      - PRIVILEGED=true
+      TZ: $TZ
+      # NODE_ENV: production
+      # DEBUG: true
+      SITE_TITLE: DumbAssets
+      # BASE_URL: http://localhost:3000
+      # DUMBASSETS_PIN: 1234
+      # ALLOWED_ORIGINS: '*'
+      # APPRISE_URL: 
+      CURRENCY_CODE: AUD
+      CURRENCY_LOCALE: en-GB
     volumes:
-      - $PERSIST/duplicati:/config
-      - $PERSIST/:/source/docker
-      - $BACKUPS/:/source/backups
-    ports:
-      - 8200:8200
+      - $PERSIST/dumbassets:/app/data
     networks:
       my_bridge:
-    labels: 
-      monocker.enable: $MONOCKER_ENABLE
-    image: 'ghcr.io/imagegenius/duplicati:latest'
+    ports: 
+      - 3000:3000
+    image: 'dumbwareio/dumbassets:latest'
 ```
 </details>
 
-[🔼 Back to top](#docker-related)
+[🔼 Back to top](#self-hosted)
 
 
 # ESPHome
@@ -936,14 +847,42 @@ services:
       my_bridge:
     volumes:
       - $PERSIST/esphome/:/config:rw
-   #devices:
-   #  - /dev/ttyUSB0
+    # devices:
+    #   - /dev/ttyUSB0
     working_dir: /config
-    image: 'ghcr.io/imagegenius/esphome:latest' #alpine version
+    image: 'esphome/esphome:latest'
 ```
 </details>
 
 [🔼 Back to top](#programming)
+
+
+# ErsatzTV
+<details>
+  <summary>
+  </summary>
+
+```
+  ersatztv:
+    container_name: ersatztv
+    hostname: ersatztv
+    restart: $RESTART_POLICY
+    environment:
+      - TZ=$TZ
+    ports:
+      - 8409:8409
+    networks:
+      my_bridge:
+    volumes:
+      - $PERSIST/ersatztv:/config
+      - $MEDIA_PATH:/media:ro
+    tmpfs:
+      - /transcode
+    image: 'ghcr.io/ersatztv/legacy:latest'
+```
+</details>
+
+[🔼 Back to top](#media-playing)
 
 
 # ExcaliDraw
@@ -960,8 +899,6 @@ services:
       - 3765:80
     networks:
       my_bridge:
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
     healthcheck:
      test: curl -f http://localhost:80/ || exit 1
     stdin_open: true
@@ -974,105 +911,96 @@ services:
 [🔼 Back to top](#self-hosted)
 
 
-# FocalBoard
+# FileBrowser
 <details>
   <summary>
   </summary>
 
 ```
-  focalboard:
-    container_name: focalboard
+  filebrowser:
+    container_name: filebrowser
+    hostname: filebrowser
     restart: $RESTART_POLICY
-    hostname: focalboard
-    environment:
-      - VIRTUAL_HOST=localhost
-      - VIRTUAL_PORT=8000
-      - VIRTUAL_PROTO=http
     volumes:
-      - $PERSIST/focalboard/data:/opt/focalboard/data:rw
-      - $PERSIST/focalboard/config/config.json:/opt/focalboard/config.json
+      # - /:/host # Do not use a root "/" directory or include the "/var" folder
+      - $PERSIST:/docker
+      - $PERSIST/filebrowser/data:/home/filebrowser/data
+      - $PERSIST/filebrowser/cache:/tmp  # Mount cache directory
+      # - $PERSIST/filebrowser/config.yaml:/home/filebrowser/data/config.yaml # https://github.com/gtsteffaniak/filebrowser/blob/main/frontend/public/config.generated.yaml
     ports:
-      - 5374:8000
+      - 7888:80
     networks:
       my_bridge:
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      focalboard-postgres:
-        condition: service_healthy
-    image: 'mattermost/focalboard:latest'
+    image: 'gtstef/filebrowser:stable'
 ```
 </details>
 
-[🔼 Back to top](#self-hosted)
+[🔼 Back to top](#system-monitoring-and-management)
 
 
-# FocalBoard-Postgres
+# FlareSolverr
 <details>
   <summary>
   </summary>
 
 ```
-  focalboard-postgres:
-    container_name: focalboard-postgres
+  flaresolverr:
+    container_name: flaresolverr
+    hostname: flaresolverr
     restart: $RESTART_POLICY
-    hostname: focalboard-postgres
+    environment:
+      - LOG_LEVEL=info
+      - LOG_FILE=none
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=hcaptcha-solver #none
+      - TZ=$TZ
+    volumes:
+      - $PERSIST/flaresolver:/config
+    ports:
+      - 8191:8191
+    networks:
+      my_bridge:
+    image: 'ghcr.io/flaresolverr/flaresolverr:latest'
+```
+</details>
+
+[🔼 Back to top](#programming)
+
+
+# Gotify
+<details>
+  <summary>
+  </summary>
+
+```
+  gotify:
+    container_name: gotify
+    hostname: gotify
+    restart: $ALWAYS_ON_POLICY
     environment:
       - TZ=$TZ
-      - POSTGRES_DB=focalboard
-      - POSTGRES_USER=focalboard
-      - POSTGRES_PASSWORD=$DB_PASSWORD
-      - PGDATA=/var/lib/postgresql/data
+      - GOTIFY_PLUGIN_DIR=/app/plugins
+      - GOTIFY_DEFAULTUSER_NAME=admin
+      - GOTIFY_DEFAULTUSER_PASS=$GOTIFY_USER_PASS
+      # - GOTIFY_DATABASE_DIALECT=postgres
+      # - GOTIFY_DATABASE_CONNECTION=host=gotify-postgres port=5432 user=gotify dbname=gotifydb password=$DB_PASSWORD sslmode=disable
+      # - GOTIFY_DATABASE_DIALECT=postgres # sqlite3, mysql, postgres
+      # - GOTIFY_DATABASE_CONNECTION=postgres=host=localhost port=5432 user=gotify dbname=gotifydb password=secret sslmode=disable
     volumes:
-      - $PERSIST/focalboard/db:/var/lib/postgresql/data:rw
+      - $PERSIST/gotify:/app/data
     networks:
       my_bridge:
-    security_opt:
-      - no-new-privileges:true
-    healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "focalboard", "-U", "focalboard"]
-      timeout: 45s
-      interval: 10s
-      retries: 10
-    user: $PUID:$PGID
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-    image: 'postgres:alpine'
-```
-</details>
-
-[🔼 Back to top](#databases)
-
-
-# Gitea
-<details>
-  <summary>
-  </summary>
-
-```
-  gitea:
-    container_name: gitea
-    restart: $RESTART_POLICY
-    hostname: gitea
-    environment:
-      - USER_UID=$PUID
-      - USER_GID=$PGID
-      - ROOT_URL=https://gitea.$DOMAINNAME
-    volumes:
-      - $PERSIST/gitea:/data
-      - $LOCAL_TIME:/etc/localtime:ro
-      - $TIME_ZONE:/etc/TZ:ro
     ports:
-      - 3333:3000
-      - 222:22
-    networks:
-      my_bridge:
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+      - 9999:80
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
-    image: 'gitea/gitea:latest'
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/80' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    image: 'gotify/server:latest'
 ```
 </details>
 
@@ -1085,7 +1013,6 @@ services:
   </summary>
 
 ```
-
   hauk:
     container_name: hauk
     restart: $RESTART_POLICY
@@ -1118,24 +1045,25 @@ services:
     environment:
       - TZ=$TZ
       - PASSWORD=$DASH_PWD
-      - DOCKER_HOST=$DOCKER_HOST
+      - SECRET_ENCRYPTION_KEY=$HOMARR_SECRET_ENCRYPTION_KEY # openssl rand -hex 32
+      - DOCKER_HOSTNAMES=192.168.1.10,192.168.1.11,192.168.1.14
+      - DOCKER_PORTS= 2375,2375,2375
+      - DB_DRIVER=better-sqlite3
+      - DB_URL=/appdata/db/db.sqlite
+      - BASE_URL=https://homarr.$DOMAINNAME/
+      # - DOCKER_HOST=$DOCKER_HOST
       - EDIT_MODE_PASSWORD=$DASH_PWD
       - DEFAULT_COLOR_SCHEME=dark
       # - DISABLE_EDIT_MODE=TRUE
-      - BASE_URL=https://homarr.$DOMAINNAME/ # to access via https://mydomain.net/BASE_URL instead of https://BASE_URL.mydomain.net, mainly for reverse proxies
     volumes:
-      - $PERSIST/homarr/configs:/app/data/configs
-      - $PERSIST/homarr/data:/data
-      - $PERSIST/homarr/icons:/app/public/icons
-      # - $DOCKER_SOCKET:/var/run/docker.sock:ro
+      - $PERSIST/homarr/data:/appdata
     ports:
       - 7575:7575
     networks:
       my_bridge:
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
-    image: 'ghcr.io/ajnart/homarr:latest'
+    image: 'ghcr.io/homarr-labs/homarr:latest'
 ```
 </details>
 
@@ -1159,7 +1087,6 @@ services:
       - PGID=$PGID
       - TZ=$TZ
     volumes:
-      # - $DOCKER_SOCKET:/var/run/docker.sock
       - $LOCAL_TIME:/etc/localtime:ro
       - $PERSIST/homeassistant:/config:rw
       - $MEDIA_PATH:/config/media/synology:ro
@@ -1172,8 +1099,6 @@ services:
     ports:
       - 8123:8123
     labels: 
-      # autoheal: $AUTOHEAL_RESTART
-      # autoheal.stop.timeout: 240 # 4min #900 #15 min
       monocker.enable: $MONOCKER_ENABLE
     healthcheck:
       test: curl -fSs http://127.0.0.1:8123 || exit 1
@@ -1183,18 +1108,52 @@ services:
       retries: 3
     network_mode: host
     working_dir: /config
-    depends_on:
-       - mariadb
-       - influxdb
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://$LOCAL_HOST:3002/loki/api/v1/push"
+      homeassistant-mariadb:
+        condition: service_healthy
     image: 'ghcr.io/home-assistant/home-assistant:stable'
 ```
 </details>
 
 [🔼 Back to top](#system-monitoring-and-management)
+
+
+# HomeAssistant-MariaDB
+<details>
+  <summary>
+  </summary>
+
+```
+  homeassistant-mariadb:
+    container_name: homeassistant-mariadb
+    restart: $ALWAYS_ON_POLICY
+    hostname: homeassistant-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_USER: homeassistant
+      MARIADB_PASSWORD: $DB_PASSWORD
+      MARIADB_DATABASE: homeassistant
+      MARIADB_ROOT_HOST: 192.168.1.10
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      # SKIP_INNODB: "yes" #only with jbergstroem/mariadb-alpine:latest, but not recommended
+    volumes:
+        - $PERSIST/homeassistant/db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      my_bridge:
+    tty: true
+    labels: 
+      monocker.enable: $MONOCKER_ENABLE  
+    image: 'jbergstroem/mariadb-alpine:latest' #10.6.13'
+```
+</details>
+
+[🔼 Back to top](#databases)
 
 
 # Immich Folder Album Creator
@@ -1255,46 +1214,6 @@ services:
 [🔼 Back to top](#self-hosted)
 
 
-# Immich-Microservices 
-<details>
-  <summary>
-  </summary>
-```
-  immich-microservices:
-    container_name: immich-microservices
-    restart: $ALWAYS_ON_POLICY
-    hostname: immich-microservices
-    environment:
-      - UPLOAD_LOCATION=./library
-      - TZ=$TZ
-      - IMMICH_ENV=production
-      - IMMICH_LOG_LEVEL=log
-      - UPLOAD_LOCATION=./albums
-      - DB_HOSTNAME=immich-postgres
-      - DB_USERNAME=immichuser
-      - DB_PASSWORD=$DB_PASSWORD
-      - DB_DATABASE_NAME=immich
-      - REDIS_HOSTNAME=immich-redis
-    volumes:
-      - $MEDIA_PATH/Photos/immich/upload:/usr/src/app/upload
-      - $MEDIA_PATH/Photos:/mnt/photos:ro
-      - $LOCAL_TIME:/etc/localtime:ro
-    networks:
-      my_bridge:
-    depends_on:
-      immich-machine-learning:
-        condition: service_started
-    # extends:
-    #   file: hwaccel.transcoding.yml
-    #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
-    command: [ "start.sh", "microservices" ]
-    image: 'ghcr.io/immich-app/immich-server:release'
-```
-</details>
-
-[🔼 Back to top](#self-hosted)
-
-
 # Immich-Postgres 
 <details>
   <summary>
@@ -1311,17 +1230,17 @@ services:
       POSTGRES_USER: immichuser
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_INITDB_ARGS: '--data-checksums'
+      DB_STORAGE_TYPE: 'HDD'
     volumes:
       - $PERSIST/immich/db:/var/lib/postgresql/data
     networks:
       my_bridge:
-    healthcheck:
-      test: pg_isready --dbname='immich' --username='immichuser' || exit 1; Chksum="$$(psql --dbname='immich' --username='immichuser' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
-      interval: 5m
-      start_interval: 30s
-      start_period: 5m
-    command: ["postgres", "-c" ,"shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
-    image: 'tensorchord/pgvecto-rs:pg16-v0.2.0'
+    labels: 
+      com.centurylinklabs.watchtower.enable: false
+      com.centurylinklabs.watchtower.monitor-only: true
+    shm_size: 128mb
+    image: 'ghcr.io/immich-app/postgres:16-vectorchord0.3.0-pgvectors0.3.0'
+
 ```
 </details>
 
@@ -1359,10 +1278,11 @@ services:
 # Immich
 <details>
   <summary>
+    To migrate from Google Photos to Immich use <a href=https://github.com/simulot/immich-go>this repo</a href>
   </summary>
 
 ```
-  immich: # to migrate from Google Photos to Immich use https://github.com/simulot/immich-go
+  immich:
     container_name: immich-server
     restart: $ALWAYS_ON_POLICY
     hostname: immich-server
@@ -1391,9 +1311,10 @@ services:
         condition: service_started
       immich-machine-learning:
         condition: service_started
-      immich-microservices:
-        condition: service_started
-    command: [ "start.sh", "immich" ]
+    healthcheck:
+      disable: false
+    # devices: # https://bhtechhub.com/how-to-check-gpu-on-linux/
+    #   - /dev/dri:/dev/dri
     # extends:
     #   file: hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
@@ -1424,7 +1345,7 @@ services:
        - DOCKER_INFLUXDB_INIT_MODE=setup
        - DOCKER_INFLUXDB_INIT_USERNAME=inlfuxdb
        - DOCKER_INFLUXDB_INIT_PASSWORD=$DB_PASSWORD
-       - DOCKER_INFLUXDB_INIT_ORG=Tamimology
+       - DOCKER_INFLUXDB_INIT_ORG=influxdb
        - DOCKER_INFLUXDB_INIT_BUCKET=homeassistant
        - INFLUXDB_BIND_ADDRESS=:8088
     volumes:
@@ -1434,124 +1355,6 @@ services:
     networks:
       my_bridge:
     image: 'influxdb:alpine'
-```
-</details>
-
-[🔼 Back to top](#databases)
-
-
-# Invidious
-<details>
-  <summary>
-  </summary>
-
-```
-  invidious:
-    container_name: invidious
-    restart: $ALWAYS_ON_POLICY
-    hostname: invidious
-    environment:
-      # Please read the following file for a comprehensive list of all available
-      # configuration options and their associated syntax:
-      # https://github.com/iv-org/invidious/blob/master/config/config.example.yml
-      INVIDIOUS_CONFIG: |
-        db:
-          dbname: invidious
-          user: invidious
-          password: $DB_PASSWORD
-          host: invidious-postgres
-          port: 5432
-        check_tables: true
-        external_port: 443
-        domain: invidious.$DOMAINNAME
-        https_only: true
-        log_level: Warn
-        popular_enabled: false
-        statistics_enabled: true
-        registration_enabled: false
-        login_enabled: true
-        captcha_enabled: true
-        jobs:
-          clear_expired_items:
-            enable: true
-          refresh_channels:
-            enable: true
-          refresh_feeds:
-            enable: true
-        captcha_api_url: https://api.anti-captcha.com
-        captcha_key: $ANTICAPTCHA_API
-        admins: ["$GM_USER"]
-        banner: "TamimologyTube"
-        hmac_key: $APP_KEY
-        default_user_preferences:
-          locale: en-US
-          region: AU
-          captions: ["English", "English (auto-generated)", "Arabic"]
-          dark_mode: "dark"
-          feed_menu: ["Trending", "Subscriptions", "Playlists"]
-          player_style: invidious
-          default_home: Trending
-          related_videos: true
-          autoplay: true
-          quality: dash
-          quality_dash: auto
-          volume: 50
-          save_player_pos: true
-    ports:
-      - 7602:3000
-    networks:
-      my_bridge:
-    user: $PUID:$PGID
-    security_opt:
-      - no-new-privileges:true
-    healthcheck:
-      test: wget -nv --tries=1 --spider http://127.0.0.1:3000/api/v1/comments/jNQXAC9IVRw || exit 1
-      interval: 30s
-      timeout: 5s
-      retries: 2
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-      monocker.enable: $MONOCKER_ENABLE
-    depends_on:
-      invidious-postgres:
-        condition: service_started
-    image: 'quay.io/invidious/invidious:latest'
-```
-</details>
-
-[🔼 Back to top](#self-hosted)
-
-
-# Invidious-Postgres
-<details>
-  <summary>
-  </summary>
-
-```
-  invidious-postgres:
-    container_name: invidious-postgres
-    restart: $ALWAYS_ON_POLICY
-    hostname: invidious-postgres
-    volumes:
-      - $PERSIST/invidious/db:/var/lib/postgresql/data
-    environment:
-      TZ: $TZ
-      POSTGRES_DB: invidious
-      POSTGRES_USER: invidious
-      POSTGRES_PASSWORD: $DB_PASSWORD
-    networks:
-      my_bridge:
-    security_opt:
-      - no-new-privileges:true
-    user: $PUID:$PGID
-    healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "invidious", "-U", "invidious"]
-      timeout: 45s
-      interval: 10s
-      retries: 10
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-    image: 'postgres:alpine'
 ```
 </details>
 
@@ -1580,12 +1383,7 @@ services:
     networks:
       my_bridge:
     labels: 
-      # autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://$LOCAL_HOST:3002/loki/api/v1/push"
     # network_mode: 'host'
     # Optional - may be necessary for docker healthcheck to pass if running in host network mode
     # extra_hosts:
@@ -1598,73 +1396,88 @@ services:
 [🔼 Back to top](#media-playing)
 
 
-# JellyStat
+# JellySearch-MeiliSearch
+<details>
+  <summary>
+    To be integrated with its Jellyfin <a href=https://github.com/arnesacnussem/jellyfin-plugin-meilisearch/>plugin</a href>
+  </summary>
+
+```
+  jellysearch-meilisearch:
+    container_name: jellysearch-meilisearch
+    restart: $RESTART_POLICY
+    hostname: jellysearch-meilisearch
+    environment:
+      TZ: $TZ
+      MEILI_MASTER_KEY: $JELLYSEARCH_MEILI_KEY
+    volumes:
+      - $PERSIST/jellyfin/jellysearch-meilisearch:/meili_data
+    ports:
+      - 7700:7700
+    networks:
+      my_bridge:
+    image: 'getmeili/meilisearch:v1.33.0'
+```
+</details>
+
+[🔼 Back to top](#programming)
+
+
+# Karakeep
 <details>
   <summary>
   </summary>
 
 ```
-  jellystat:
-    container_name: jellystat
-    restart: $ALWAYS_ON_POLICY
-    hostname: jellystat
+  karakeep:
+    container_name: karakeep
+    hostname: karakeep
+    restart: $RESTART_POLICY
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: $DB_PASSWORD
-      POSTGRES_IP: jellystat-postgres
-      POSTGRES_PORT: 5432
-      JWT_SECRET: $APP_KEY
+      MEILI_ADDR: http://karakeep-meilisearch:7700
+      MEILI_MASTER_KEY: $KARAKEEP_MEILI_KEY
+      DATA_DIR: /data
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: $KARAKEEP_AUTH_SECRET
+      # BROWSER_WEB_URL: http://chrome:9222 #USED FOR CRAWLING WEBSITES
+      # OPENAI_API_KEY: ...
     volumes:
-      - $PERSIST/jellyfin/stat/data:/app/backend/backup-data
+      - $PERSIST/karakeep:/data
     ports:
-      - 6555:3000 #Server Port
-      - 6556:3004 #Websocket port
+      - 3421:3000
     networks:
       my_bridge:
     depends_on:
-      jellystat-postgres:
-        condition: service_healthy
-    image: 'cyfershepard/jellystat:latest'
+      karakeep-meilisearch:
+        condition: service_started
+    image: 'ghcr.io/karakeep-app/karakeep:latest'
 ```
 </details>
 
-[🔼 Back to top](#media-playing)
+[🔼 Back to top](#links-and-page-organisation)
 
 
-# Jellystat-Postgres
+# Karakeep-MeiliSearch
 <details>
   <summary>
   </summary>
 
 ```
-  jellystat-postgres:
-    container_name: jellystat-postgres
-    restart: $ALWAYS_ON_POLICY
-    hostname: jellystat-postgres
-    volumes:
-      - $PERSIST/jellyfin/stat/db:/var/lib/postgresql/data
+  karakeep-meilisearch:
+    container_name: karakeep-meilisearch
+    hostname: karakeep-meilisearch
+    restart: $RESTART_POLICY
     environment:
-      TZ: $TZ
-      POSTGRES_DB: jfstat
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: $DB_PASSWORD
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - $PERSIST/karakeep/meilisearch:/meili_data
     networks:
       my_bridge:
-    security_opt:
-      - no-new-privileges:true
-    user: $PUID:$PGID
-    healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "jfstat", "-U", "postgres"]
-      timeout: 45s
-      interval: 10s
-      retries: 10
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-    image: 'postgres:alpine'
+    image: 'getmeili/meilisearch:v1.13.3'
 ```
 </details>
 
-[🔼 Back to top](#databases)
+[🔼 Back to top](#programming)
 
 
 # Kavita
@@ -1686,73 +1499,11 @@ services:
         - 8778:5000
     networks:
         my_bridge:
-    image: 'jvmilazz0/kavita:latest'    # Using the stable branch from the official dockerhub repo.
+    image: 'jvmilazz0/kavita:latest'
 ```
 </details>
 
 [🔼 Back to top](#self-hosted)
-
-
-# LibreY
-<details>
-  <summary>
-  </summary>
-
-```
-  librey:
-    container_name: librey
-    restart: $ALWAYS_ON_POLICY
-    hostname: librey
-    environment:
-      - CONFIG_GOOGLE_DOMAIN=com
-      - CONFIG_LANGUAGE=en
-      - CONFIG_NUMBER_OF_RESULTS=10
-      - CONFIG_INVIDIOUS_INSTANCE=https://invidious.$DOMAINNAME
-      - CONFIG_DISABLE_BITTORRENT_SEARCH=false
-      - CONFIG_HIDDEN_SERVICE_SEARCH=false #if true it hides the TOR tab
-      - CONFIG_INSTANCE_FALLBACK=true
-      - CONFIG_RATE_LIMIT_COOLDOWN=25
-      - CONFIG_CACHE_TIME=20
-      - CONFIG_TEXT_SEARCH_ENGINE=google
-      - CURLOPT_PROXY_ENABLED=false
-    volumes:
-      - $PERSIST/librey/nginx:/var/log/nginx
-      - $PERSIST/librey/logs:/var/log/php7
-    ports:
-      - 8245:8080
-    networks:
-      my_bridge:
-    image: 'ghcr.io/ahwxorg/librey:latest'
-```
-</details>
-
-[🔼 Back to top](#self-hosted)
-
-
-# LinkDing
-<details>
-  <summary>
-  </summary>
-
-```
-  linkding:
-    container_name: linkding
-    hostname: linkding
-    restart: $RESTART_POLICY
-    environment:
-      - LD_SUPERUSER_NAME=tam
-      - LD_SUPERUSER_PASSWORD=$LINKDING_PWD
-    volumes:
-      - $PERSIST/linkding:/etc/linkding/data
-    ports:
-      - 7461:9090
-    networks:
-      my_bridge:
-    image: 'sissbruecker/linkding:latest-alpine'
-```
-</details>
-
-[🔼 Back to top](#links-and-page-organisation)
 
 
 # Loki
@@ -1795,7 +1546,7 @@ services:
       - PGID=$PGID
       - MALOJA_DATA_DIRECTORY=/data
       - MALOJA_FORCE_PASSWORD=$MALOJA_PWD
-      - MALOJA_NAME=Tamimology Music
+      - MALOJA_NAME=My Music
       - MALOJA_CHARTS_DISPLAY_TILES=true
       - MALOJA_DISPLAY_ART_ICONS=true
     volumes:
@@ -1811,90 +1562,106 @@ services:
 [🔼 Back to top](#media-playing)
 
 
-# MariaDB
+# Manyfold
 <details>
   <summary>
   </summary>
 
 ```
-  mariadb:
-    container_name: mariadb
+  manyfold:
+    container_name: manyfold
+    hostname: manyfold
     restart: $ALWAYS_ON_POLICY
-    hostname: mariadb
-    environment: # https://mariadb.com/kb/en/mariadb-docker-environment-variables/
-      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
-      MARIADB_USER: homeassistant
-      MARIADB_PASSWORD: $DB_PASSWORD
-      MARIADB_DATABASE: homeassistant
-      MARIADB_ROOT_HOST: 192.168.1.10
-      MARIADB_AUTO_UPGRADE: "1"
-      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
-      MARIADB_INITDB_SKIP_TZINFO: "1"
-      # MYSQL_ROOT_PASSWORD: $DB_PASSWORD
-      # MYSQL_USER: authelia
-      # MYSQL_PASSWORD: $DB_PASSWORD
-      # MYSQL_DATABASE: authelia
-      # MYSQL_ROOT_USER: authelia
-      PGID: $PGID
+    environment:
+      REDIS_URL: redis://:$DB_PASSWORD@manyfold-redis:6379/1
+      DATABASE_URL: postgresql://manyfolduser:$DB_PASSWORD@manyfold-postgres/manyfold?pool=5
+      SECRET_KEY_BASE: $APP_KEY
       PUID: $PUID
-      TZ: $TZ
-      # SKIP_INNODB: "yes" #only with jbergstroem/mariadb-alpine:latest, but not recommended
+      PGID: $PGID
     volumes:
-       - $PERSIST/mariadb:/var/lib/mysql
-  ports:
-      - 3306:3306
+      - $PERSIST/manyfold/libraries:/models:rw
+    ports:
+      - 7214:3214
     networks:
       my_bridge:
-    tty: true
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
-      autoheal.stop.timeout: 30
-      monocker.enable: $MONOCKER_ENABLE  
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://$LOCAL_HOST:3002/loki/api/v1/push"
-    image: 'jbergstroem/mariadb-alpine:10.6.13' # latest'
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      manyfold-redis:
+        condition: service_healthy
+      manyfold-postgres:
+        condition: service_healthy
+    labels:
+      - "docktail.service.enable=true"
+      - "docktail.service.name=3dmodels"
+      - "docktail.service.port=3214"  # CONTAINER port (RIGHT side of "8080:80")
+      - "docktail.service.service-port=443"
+    image: 'ghcr.io/manyfold3d/manyfold:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# Manyfold-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  manyfold-postgres:
+    container_name: manyfold-postgres
+    hostname: manyfold-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: manyfold
+      POSTGRES_USER: manyfolduser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/manyfold/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "manyfold", "-U", "manyfolduser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
 ```
 </details>
 
 [🔼 Back to top](#databases)
 
 
-# MeTube
+# Manyfold-Redis
 <details>
   <summary>
   </summary>
 
 ```
-  metube:
-    container_name: metube
-    restart: $RESTART_POLICY
-    hostname: metube
-    volumes:
-      - $DOWNLOADS/YouTube:/downloads
-      - $DOWNLOADS/YouTube/cookies:/cookies
+  manyfold-redis:
+    container_name: manyfold-redis
+    hostname: manyfold-redis
+    restart: $ALWAYS_ON_POLICY
     environment:
-      - UID=$PUID
-      - GID=$PGID
-      - DOWNLOAD_DIR=/downloads/video
-      - AUDIO_DOWNLOAD_DIR=/downloads/audio
-      - DEFAULT_THEME=dark
-      - URL_PREFIX=/
-      - YTDL_OPTIONS={"cookiefile":"/cookies/cookies.txt"} #,"writesubtitles":true,"subtitleslangs":["en","-live_chat"],"postprocessors":[{"key":"Exec","exec_cmd":"chmod 0664","when":"after_move"},{"key":"FFmpegEmbedSubtitle","already_have_subtitle":false},{"key":"FFmpegMetadata","add_chapters":true}]}
-    ports:
-      - 8081:8081
+      TZ: $TZ
+    volumes:
+      - $PERSIST/manyfold/redis:/data:rw
     networks:
       my_bridge:
-    # healthcheck:
-    #  test: curl -f http://localhost:8081/ || exit 1
-    labels: 
-      monocker.enable: $MONOCKER_ENABLE
-    image: 'ghcr.io/alexta69/metube:  latest'
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass $DB_PASSWORD
+    read_only: true
+    user: $PUID:$PGID
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+    image: 'redis:alpine'
 ```
 </details>
 
-[🔼 Back to top](#self-hosted)
+[🔼 Back to top](#databases)
 
 
 # Monocker
@@ -1927,10 +1694,11 @@ services:
 # Mozhi
 <details>
   <summary>
+    Get the android app from <a href=https://github.com/you-apps/TranslateYou>here</a href>
   </summary>
 
 ```
-  mozhi:  # android app from https://github.com/you-apps/TranslateYou
+  mozhi:
     container_name: mozhi
     restart: $RESTART_POLICY
     hostname: mozhi
@@ -2008,9 +1776,8 @@ services:
     networks:
       my_bridge:
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
-    user: 1035:$PGID # should be owner of volumes
+    user: $PUID$:$PGID # should be owner of volumes
     image: 'ghcr.io/navidrome/navidrome:latest'
 ```
 </details>
@@ -2039,7 +1806,6 @@ services:
       - $PERSIST/netalertx/logs:/app/front/log
     network_mode: host
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
     security_opt:
       - no-new-privileges:true
@@ -2050,6 +1816,144 @@ services:
 </details>
 
 [🔼 Back to top](#networking-and-security)
+
+
+# NextCloud
+<details>
+  <summary>
+  </summary>
+
+```
+  nextcloud:
+    container_name: nextcloud
+    restart: $RESTART_POLICY
+    hostname: nextcloud
+    environment:
+      # - NEXTCLOUD_ADMIN_USER=admin
+      # - NEXTCLOUD_ADMIN_PASSWORD=$DB_PASSWORD
+      - REDIS_HOST=nextcloud-redis
+      - NEXTCLOUD_TRUSTED_DOMAINS=192.168.1.11 nextcloud.$DOMAINNAME
+      - TRUSTED_PROXIES=192.168.1.11 nextcloud.$DOMAINNAME
+      - OVERWRITEHOST=nextcloud.$DOMAINNAME
+      - OVERWRITEPROTOCOL=https
+      - MYSQL_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextclouduser
+      - MYSQL_HOST=nextcloud-mariadb
+      - SMTP_HOST=$GM_HOST
+      - SMTP_SECURE=ssl
+      - SMTP_PORT=$GM_PORT
+      - SMTP_AUTHTYPE=LOGIN
+      - SMTP_NAME=$GM_USER
+      - SMTP_PASSWORD=$GM_PSW
+      - MAIL_FROM_ADDRESS=$GM_USER_MAIL
+      - MAIL_DOMAIN=gmail.com
+    volumes:
+      - $PERSIST/nextcloud/config:/var/www/html:rw
+    ports:
+      - 8082:80
+    networks:
+      my_bridge:
+    healthcheck:
+      test: curl -f http://localhost:80/ || exit 1
+    depends_on:
+      nextcloud-mariadb:
+        condition: service_started
+      nextcloud-redis:
+        condition: service_healthy
+      nextcloud-cron:
+        condition: service_started
+    image: 'nextcloud:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# NextCloud-Cron
+<details>
+  <summary>
+  </summary>
+
+```
+  nextcloud-cron:
+    container_name: nextcloud-cron
+    restart: $ALWAYS_ON_POLICY
+    hostname: nextcloud-redis
+    volumes:
+      - $PERSIST/nextcloud/config:/var/www/html:rw
+    networks:
+      my_bridge:
+    entrypoint: /cron.sh
+    depends_on:
+      nextcloud-mariadb:
+        condition: service_started
+      nextcloud-redis:
+        condition: service_started
+    image: 'nextcloud:apache'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# NextCloud-MariaDB
+<details>
+  <summary>
+  </summary>
+
+```
+  nextcloud-mariadb:
+    container_name: nextcloud-mariadb
+    restart: $RESTART_POLICY
+    hostname: nextcloud-mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextclouduser
+      - TZ=$TZ
+    volumes:
+      - $PERSIST/nextcloud/db:/var/lib/mysql:rw
+    networks:
+      my_bridge:
+    user: $PUID:$PGID
+    security_opt:
+      - no-new-privileges:false
+    command: --transaction-isolation=READ-COMMITTED
+    image: 'mariadb:lts'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# NextCloud-Redis
+<details>
+  <summary>
+  </summary>
+
+```
+  nextcloud-redis:
+    container_name: nextcloud-redis
+    restart: $ALWAYS_ON_POLICY
+    hostname: nextcloud-redis
+    environment:
+      TZ: $TZ
+    volumes:
+      - $PERSIST/nextcloud/redis:/data:rw
+    expose:
+      - 6379
+    networks:
+      my_bridge:
+    user: $PUID:$PGID
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+    image: 'redis:alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
 
 
 # OctoPrint
@@ -2075,11 +1979,45 @@ services:
     # use `python3 -m serial.tools.miniterm` to see what the name is of the printer, this requires pyserial
      - /dev/ttyUSB0:/dev/ttyUSB0
     #  - /dev/video0:/dev/video0
+    labels: 
+      com.centurylinklabs.watchtower.enable: false
+      com.centurylinklabs.watchtower.monitor-only: true
     image: 'octoprint/octoprint:latest'
 ```
 </details>
 
 [🔼 Back to top](#programming)
+
+
+# PairDrop
+<details>
+  <summary>
+  </summary>
+
+```
+  pairdrop:
+    container_name: pairdrop
+    hostname: pairdrop
+    restart: $RESTART_POLICY
+    environment:
+        - PUID=$PUID
+        - PGID=$PGID
+        - WS_FALLBACK=false # Set to true to enable websocket fallback if the peer to peer WebRTC connection is not available to the client.
+        - RATE_LIMIT=false # Set to true to limit clients to 1000 requests per 5 min.
+        - RTC_CONFIG=/config/rtc_config.json #false # Set to the path of a file that specifies the STUN/TURN servers.
+        - DEBUG_MODE=false # Set to true to debug container and peer connections.
+        - TZ=$TZ
+    volumes:
+      - $PERSIST/pairdrop:/config
+    ports:
+        - 3005:3000
+    networks:
+      my_bridge:
+    image: 'lscr.io/linuxserver/pairdrop:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
 
 
 # Paperless-NGX
@@ -2106,10 +2044,10 @@ services:
       USERMAP_UID: $PUID
       USERMAP_GID: $PGID
       PAPERLESS_TIME_ZONE: $TZ
-      PAPERLESS_ADMIN_USER: tam
+      PAPERLESS_ADMIN_USER: admin
       PAPERLESS_ADMIN_PASSWORD: $PAPERLESS_PWD
-      PAPERLESS_URL: https://documents.tamimology.com
-      PAPERLESS_CSRF_TRUSTED_ORIGINS: https://documents.tamimology.com
+      PAPERLESS_URL: https://paperless.$DOMAINNAME
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.$DOMAINNAME
       PAPERLESS_OCR_LANGUAGES: ara eng # check what is installed by  sudo docker exec -it paperless-ngx tesseract --list-langs
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-ngx-gotenberg:3000
@@ -2168,7 +2106,7 @@ services:
       - "gotenberg"
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
-    image: 'gotenberg/gotenberg:latest'
+    image: 'docker.io/gotenberg/gotenberg:latest'
 ```
 </details>
 
@@ -2198,7 +2136,7 @@ services:
       timeout: 45s
       interval: 10s
       retries: 10
-    image: 'postgres:alpine'
+    image: 'postgres:16-alpine'
 ```
 </details>
 
@@ -2249,7 +2187,7 @@ services:
     networks:
       my_bridge:
     user: $PUID:$PGID
-    image: 'ghcr.io/paperless-ngx/tika:latest'
+    image: 'docker.io/apache/tika:latest'
 ```
 </details>
 
@@ -2273,14 +2211,14 @@ services:
       DATABASE_NAME: pastefy
       DATABASE_USER: pastefy
       DATABASE_PASSWORD: $DB_PASSWORD
-      DATABASE_HOST: mariadb
+      DATABASE_HOST: pastefy-mariadb
       DATABASE_PORT: 3306
       SERVER_NAME: https://paste.$DOMAINNAME
       AUTH_PROVIDER: $PROVIDER
       OAUTH2_INTERAAPPS_CLIENT_ID: $CLIENT_ID
       OAUTH2_INTERAAPPS_CLIENT_SECRET: $CLIENT_SECRET
-      PASTEFY_INFO_CUSTOM_NAME: Tamimology Home Server
-      PASTEFY_INFO_CUSTOM_FOOTER: Tam HAJAR 2021
+      PASTEFY_INFO_CUSTOM_NAME: My Home Server
+      PASTEFY_INFO_CUSTOM_FOOTER: Say My Name
       #PASTEFY_INFO_CUSTOM_LOGO: https://urltoimage
       PASTEFY_LOGIN_REQUIRED: false
       PASTEFY_LOGIN_REQUIRED_CREATE: true
@@ -2291,12 +2229,77 @@ services:
     networks:
       my_bridge:
     depends_on:
-      - mariadb
+      - pastefy-mariadb
     image: "interaapps/pastefy:latest"
 ```
 </details>
 
 [🔼 Back to top](#self-hosted)
+
+
+# PasteFy-MariaDB
+<details>
+  <summary>
+  </summary>
+
+```
+  pastefy-mariadb:
+    container_name: pastefy-mariadb
+    restart: $ALWAYS_ON_POLICY
+    hostname: pastefy-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_ROOT_HOST: 192.168.1.10
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      # SKIP_INNODB: "yes" #only with jbergstroem/mariadb-alpine:latest, but not recommended
+    volumes:
+        - $PERSIST/pastefy/db:/var/lib/mysql
+    networks:
+      my_bridge:
+    tty: true
+    labels: 
+      monocker.enable: $MONOCKER_ENABLE  
+    image: 'jbergstroem/mariadb-alpine:latest''
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# PeaNUT
+<details>
+  <summary>
+    This was a challenging one on Ubuntu, refer <a href=https://github.com/tamimology/nut-ubuntu>this guide</a href> for more details
+  </summary>
+
+```
+  peanut:
+    container_name: peanut
+    hostname: peanut
+    restart: $RESTART_POLICY
+    environment:
+      - NUT_HOST=192.168.1.11
+      - NUT_PORT=3493
+      - WEB_PORT=8080
+      - WEB_USERNAME=$PEANUT_USR
+      - WEB_PASSWORD=$PEANUT_PWD
+    volumes:
+      - $PERSIST/peanut:/config
+    networks:
+      my_bridge:
+    ports:
+      - 8999:8080
+    user: $PUID:$PGID
+    image: 'brandawg93/peanut:latest'
+```
+</details>
+
+[🔼 Back to top](#networking-and-security)
 
 
 # Portainer-EE
@@ -2348,6 +2351,7 @@ services:
       - MYSQL_DATABASE=projectsend
       - MYSQL_USER=projectsend
       - MYSQL_PASSWORD=$DB_PASSWORD
+      - MYSQL_PORT=3306
     volumes:
       - $PERSIST/projectsend/config:/config
       - $PERSIST/projectsend/data:/data
@@ -2356,7 +2360,8 @@ services:
     networks:
       my_bridge:
     depends_on:
-      - mariadb
+      projectsend-mariadb:
+        condition: service_healthy
     healthcheck:
       test: curl -f http://localhost:80/ || exit 1
     image: 'lscr.io/linuxserver/projectsend:latest'
@@ -2364,6 +2369,40 @@ services:
 </details>
 
 [🔼 Back to top](#self-hosted)
+
+
+# ProjectSend-MariaDB
+<details>
+  <summary>
+  </summary>
+
+```
+  projectsend-mariadb:
+    container_name: projectsend-mariadb
+    restart: $ALWAYS_ON_POLICY
+    hostname: projectsend-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_ROOT_HOST: 192.168.1.10
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      # SKIP_INNODB: "yes" #only with jbergstroem/mariadb-alpine:latest, but not recommended
+    volumes:
+        - $PERSIST/projectsend/db:/var/lib/mysql
+    networks:
+      my_bridge:
+    tty: true
+    labels: 
+      monocker.enable: $MONOCKER_ENABLE  
+    image: 'jbergstroem/mariadb-alpine:latest' #10.6.13'
+```
+</details>
+
+[🔼 Back to top](#databases)
 
 
 # Promtail
@@ -2390,6 +2429,139 @@ services:
 [🔼 Back to top](#databases)
 
 
+# Prowlarr
+<details>
+  <summary>
+  </summary>
+
+```
+  prowlarr:
+    container_name: prowlarr
+    restart: $RESTART_POLICY
+    hostname: prowlarr
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - $PERSIST/prowlarr/config:/config
+    ports:
+      - 9696:9696
+    networks:
+      my_bridge:
+    depends_on:
+      prowlarr-postgres:
+          condition: service_healthy
+    image: 'lscr.io/linuxserver/prowlarr:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# Prawlarr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  prowlarr-postgres:
+    container_name: prowlarr-postgres
+    hostname: prowlarr-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: prowlarr
+      POSTGRES_USER: prowlarruser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/prowlarr/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "prowlarr", "-U", "prowlarruser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# PruneMate
+<details>
+  <summary>
+  </summary>
+
+```
+  prunemate:
+    container_name: prunemate
+    restart: $RESTART_POLICY
+    hostname: prunemate
+    volumes:
+    #   - $DOCKER_SOCKET:/var/run/docker.sock
+      - $PERSIST/prunemate/logs:/var/log
+      - $PERSIST/prunemate/config:/config
+    environment:
+    #   - DOCKER_HOST= $DOCKER_HOST
+      - PRUNEMATE_TZ=$TZ
+      - PRUNEMATE_TIME_24H=true #false for 12-Hour format (AM/PM)
+    networks:
+      my_bridge:
+    ports:
+      - 7676:8080
+    image: 'anoniemerd/prunemate:latest'
+```
+</details>
+
+[🔼 Back to top](#docker-related)
+
+
+# Quillnote-Server
+<details>
+  <summary>
+    Self built docker contianer from
+    
+    https://github.com/arunk140/quillnote-server
+    
+    SSH into host then execute:
+    `git clone https://github.com/arunk140/quillnote-server.git`
+    `cd quillnote-server`
+
+    `docker build -f "Dockerfile" -t quillnoteserver:latest "."`
+    
+    SSH into container and then execute:
+    `./server user add [username] [password]`
+  </summary>
+
+```
+  quillnote-server:
+    container_name: quillnote-server
+    hostname: quillnote-server
+    restart: $RESTART_POLICY
+    privileged: true
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+    volumes:
+      - $PERSIST/quillnote-server/notes.db:/app/notes.db
+    networks:
+      my_bridge:
+    ports:
+      - 3020:3000
+    cap_add:
+      - NET_ADMIN
+    labels: 
+      diun.enable: false
+      com.centurylinklabs.watchtower.enable: false
+    image: 'quillnoteserver:local'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
 # QR-code
 <details>
   <summary>
@@ -2406,8 +2578,6 @@ services:
       - 8895:80
     healthcheck:
      test: curl -f http://localhost:80/ || exit 1
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
     security_opt:
       - no-new-privileges:true
     image: 'bizzycolah/qrcode-generator:latest'
@@ -2417,35 +2587,179 @@ services:
 [🔼 Back to top](#self-hosted)
 
 
-# Scrutiny
+# Radarr
 <details>
   <summary>
   </summary>
 
 ```
-  scrutiny:
-    container_name: scrutiny
+  radarr:
+    container_name: radarr
     restart: $RESTART_POLICY
-    hostname: scrutiny
-    privileged: true
+    hostname: radarr
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
     volumes:
-      - $PERSIST/scrutiny:/opt/scrutiny/config
-      - /run/udev:/run/udev:ro
-      - $PERSIST/scrutiny/influxdb:/opt/scrutiny/influxdb
+      - $PERSIST/radarr/config:/config
+      - $MEDIA_PATH/Movies/English:/movies #optional
+      - $DOWNLOADS:/downloads #optional
     ports:
-      - 6080:8080
-      - 8086:8086
+      - 7878:7878
     networks:
       my_bridge:
-    cap_add:
-      - SYS_RAWIO
-    devices:
-      - /dev:/dev
-    image: 'ghcr.io/analogj/scrutiny:master-omnibus'
+    depends_on:
+      prowlarr:
+          condition: service_started
+      transmission:
+          condition: service_started
+      radarr-postgres:
+          condition: service_healthy
+    image: 'lscr.io/linuxserver/radarr:latest'
 ```
 </details>
 
-[🔼 Back to top](#system-monitoring-and-management)
+[🔼 Back to top](#self-hosted)
+
+
+# Radarr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  radarr-postgres:
+    container_name: radarr-postgres
+    hostname: radarr-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: radarr
+      POSTGRES_USER: radarruser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/radarr/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "radarr", "-U", "radarruser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Seerr
+<details>
+  <summary>
+  </summary>
+
+```
+  seerr:
+    container_name: seerr
+    restart: $RESTART_POLICY
+    hostname: seerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=$TZ
+      - PORT=5055 #optional
+      - DB_TYPE=postgres # Which DB engine to use, either sqlite or postgres. The default is sqlite.
+      - DB_HOST=seerr-postgres
+      - DB_PORT=5432
+      - DB_USER=seerruser
+      - DB_PASS=$DB_PASSWORD
+      - DB_NAME=seerr
+      - DB_LOG_QUERIES=false # (optional) Whether to log the DB queries for debugging. The default is "false".
+    volumes:
+      - $PERSIST/seerr/config:/app/config
+    ports:
+      - 5055:5055
+    networks:
+      my_bridge:
+    init: true
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
+    depends_on:
+      transmission:
+          condition: service_started
+      sonarr:
+          condition: service_started
+      radarr:
+          condition: service_started
+      seerr-postgres:
+          condition: service_healthy
+    image: 'ghcr.io/seerr-team/seerr:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# Seerr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  seerr-postgres:
+    container_name: seerr-postgres
+    hostname: seerr-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: seerr
+      POSTGRES_USER: seerruser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/seerr/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "seerr", "-U", "seerruser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# SMTP-to-Gotify
+<details>
+  <summary>
+  </summary>
+
+```
+  smtp-to-gotify:
+    container_name: smtp-to-gotify
+    hostname: smtp-to-gotify
+    restart: $ALWAYS_ON_POLICY
+    environment:
+    - GOTIFY_URL=$HTTPS_GOTIFY_URL
+    - GOTIFY_TOKEN=$GOTIFY_SYNOLOGY_TOKEN
+    - API_KEY=$APP_KEY
+    network_mode: "host"
+    ports:
+      - 2525:2525
+    labels: 
+      monocker.enable: $MONOCKER_ENABLE
+    depends_on:
+      gotify:
+        condition: service_healthy
+    image: 'imoshtokill/smtp-to-gotify-docker:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
 
 
 # Socket-Proxy
@@ -2508,6 +2822,111 @@ services:
 [🔼 Back to top](#docker-related)
 
 
+# Sonarr
+<details>
+  <summary>
+  </summary>
+
+```
+  sonarr:
+    container_name: sonarr
+    restart: $RESTART_POLICY
+    hostname: sonarr
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - $PERSIST/sonarr/config:/config
+      - $MEDIA_PATH/Shows/English:/tv #optional
+      - $DOWNLOADS:/downloads #optional
+    ports:
+      - 8989:8989
+    networks:
+      my_bridge:
+    depends_on:
+      prowlarr:
+          condition: service_started
+      transmission:
+          condition: service_started
+      sonarr-postgres:
+          condition: service_healthy
+    image: 'lscr.io/linuxserver/sonarr:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# Sonarr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  sonarr-postgres:
+    container_name: sonarr-postgres
+    hostname: sonarr-postgres
+    restart: $RESTART_POLICY
+    environment:
+      POSTGRES_DB: sonarr
+      POSTGRES_USER: sonarruser
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $PERSIST/sonarr/db:/var/lib/postgresql:rw
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "sonarr", "-U", "sonarruser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    image: 'postgres:18-alpine'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Speedtest-Tracker
+<details>
+  <summary>
+    This has a native integration in Home Assistant, hence I use it, and not any other
+  </summary>
+
+```
+  speedtest-tracker:
+    container_name: speedtest-tracker
+    restart: $RESTART_POLICY
+    hostname: speedtest-tracker
+    environment:
+        - PUID=$PUID
+        - PGID=$PGID
+        - APP_KEY=base64:$ST_APP_KEY
+        - DB_CONNECTION=sqlite
+        - APP_NAME=My Speedtest Tracker
+        - APP_TIMEZONE=$TZ
+        - DISPLAY_TIMEZONE=$TZ
+        - ADMIN_NAME=Administrator
+        - ADMIN_EMAIL=$GM_USER
+        - ADMIN_PASSWORD=$SPEEDTEST_PWD
+        - SPEEDTEST_SCHEDULE=*/5 * * * * #At every 5th minute #0 * * * * #At every hour
+        # - SPEEDTEST_INTERFACE=eth0
+    volumes:
+        - $PERSIST/speedtest-tracker/data:/config
+        - $PERSIST/speedtest-tracker/ssl-keys:/config/keys
+    networks:
+      my_bridge:
+    ports:
+        - 8765:80
+        - 8766:443
+    image: 'lscr.io/linuxserver/speedtest-tracker:latest'
+```
+</details>
+
+[🔼 Back to top](#networking-and-security)
+
+
 # Squoosh
 <details>
   <summary>
@@ -2529,6 +2948,51 @@ services:
 [🔼 Back to top](#self-hosted)
 
 
+# SubSyncarr-Plus
+<details>
+  <summary>
+  </summary>
+
+```
+  subsyncarr-plus:
+    container_name: subsyncarr-plus
+    hostname: subsyncarr-plus
+    restart: $RESTART_POLICY
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - CRON_SCHEDULE=0 0 * * * # Runs every day at midnight by default
+      - SCAN_PATHS=/movies,/tv # Comma-separated paths to scan
+      # - EXCLUDE_PATHS=/movies/temp,/tv/downloads # Optional: exclude directories
+      - MAX_CONCURRENT_SYNC_TASKS=1 # Number of parallel processing tasks
+      - INCLUDE_ENGINES=ffsubsync,autosubsync,alass # Engines to use
+      - SYNC_ENGINE_TIMEOUT_MS=1800000
+      - WEB_PORT=3000                 # Port for web UI (default: 3000)
+      - WEB_HOST=0.0.0.0              # Host to bind to (default: 127.0.0.1, use 0.0.0.0 for all interfaces)
+      # - DB_PATH=/app/data/subsyncarr-plus.db # SQLite database location (default: /app/data/subsyncarr-plus.db)
+    volumes:
+      - $PERSIST/subsyncarr:/app/data
+      - $MEDIA_PATH/Movies/English:/movies
+      - $MEDIA_PATH/Shows/English:/tv
+    ports:
+    - 3333:3000
+    networks:
+      my_bridge:
+    user: '$PUID:$PGID'
+    deploy:
+      resources:
+        limits:
+          memory: 768M # Hard limit
+        reservations:
+          memory: 128M # Minimum guaranteed memory
+    image: 'tomtomw123/subsyncarr-plus:latest'
+```
+</details>
+
+[🔼 Back to top](#media-playing)
+
+
 # SyncThing
 <details>
   <summary>
@@ -2538,7 +3002,7 @@ services:
   syncthing:
     container_name: syncthing
     restart: $ALWAYS_ON_POLICY
-    hostname: Synchology #my-syncthing
+    hostname: synchthing
     environment:
       - PUID=$PUID
       - PGID=$PGID
@@ -2554,7 +3018,6 @@ services:
     networks:
       my_bridge:
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
     image: 'syncthing/syncthing:1.26' #latest'
 ```
@@ -2611,13 +3074,49 @@ services:
       - 8259:80
     networks:
       my_bridge:
-    labels: 
-      autoheal: $AUTOHEAL_RESTART
     image: 'danmed/tasmobackupv1:latest'
 ```
 </details>
 
 [🔼 Back to top](#programming)
+
+
+# TinyMediaManager
+<details>
+  <summary>
+  </summary>
+
+```
+  tinymediamanager:
+    container_name: tinymediamanager
+    restart: $RESTART_POLICY
+    hostname: tinymediamanager
+    environment:
+      - USER_ID=$PUID
+      - GROUP_ID=$PGID
+      - ALLOW_DIRECT_VNC=true
+      - LC_ALL=en_US.UTF-8 # force UTF8
+      - LANG=en_US.UTF-8   # force UTF8
+      - TZ=$TZ
+      - LC_TIME=C.UTF-8 #for 24 hour format
+      # - PASSWORD=<password>
+    volumes:
+      - $PERSIST/tinymediamanager:/data
+      - $PERSIST/tinymediamanager/addons:/app/addons:rw
+      - $MEDIA_PATH:/media
+      # - $MEDIA_PATH/Movies/English:/media/movies
+      # - $MEDIA_PATH/Shows/English:/media/tv_shows
+    ports:
+      - 5900:5900 # VNC port
+      - 4000:4000 # Webinterface
+      - 5800:5800
+    networks:
+      my_bridge:
+    image: 'tinymediamanager/tinymediamanager:latest'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
 
 
 # TracCar
@@ -2641,11 +3140,185 @@ services:
       - 5055:5055/tcp # https://www.traccar.org/osmand/
       - 5055:5055/udp # https://www.traccar.org/osmand/
     depends_on: #https://www.traccar.org/mysql/
-      - mariadb
+      traccar-mariadb:
+        condition: service_healthy
     network_mode: host #to be able to integrate in HA
     labels: 
       monocker.enable: $MONOCKER_ENABLE
     image: 'traccar/traccar:alpine'
+```
+</details>
+
+[🔼 Back to top](#self-hosted)
+
+
+# TracCar-MariaDB
+<details>
+  <summary>
+  </summary>
+
+```
+  traccar-mariadb:
+    container_name: traccar-mariadb
+    restart: $ALWAYS_ON_POLICY
+    hostname: traccar-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_ROOT_HOST: 192.168.1.10
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DISABLE_UPGRADE_BACKUP: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      # SKIP_INNODB: "yes" #only with jbergstroem/mariadb-alpine:latest, but not recommended
+    volumes:
+        - $PERSIST/traccar/db:/var/lib/mysql
+    ports:
+      - 3307:3306
+    networks:
+      my_bridge:
+    tty: true
+    labels: 
+      monocker.enable: $MONOCKER_ENABLE  
+    image: 'jbergstroem/mariadb-alpine:latest'
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Tracearr
+<details>
+  <summary>
+  </summary>
+
+```
+  tracearr:
+    container_name: tracearr
+    hostname: tracearr
+    restart: $RESTART_POLICY
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - TZ=$TZ
+      - DATABASE_URL=postgres://tracearruser:$DB_PASSWORD@tracearr-timescale-db/tracearr
+      - REDIS_URL=redis://tracearr-redis:6379
+      - JWT_SECRET=$TRACEARR_JWT_SECRET # openssl rand -hex 32
+      - COOKIE_SECRET=$TRACEARR_COOKIE_SECRET # openssl rand -hex 32
+      - CORS_ORIGIN=*
+      - LOG_LEVEL=info
+      # - DATABASE_POOL_MAX=50  # Database connection pool size (default: 50)
+    volumes:
+      - $PERSIST/tracearr/backups:/data/backup
+    ports:
+      - 3300:3000
+    networks:
+      my_bridge:
+    depends_on:
+      tracearr-timescale-db:
+        condition: service_healthy
+      tracearr-redis:
+        condition: service_healthy
+    image: 'ghcr.io/connorgallopo/tracearr:latest'
+```
+</details>
+
+[🔼 Back to top](#media-playing)
+
+
+# Tracearr-Postgres
+<details>
+  <summary>
+  </summary>
+
+```
+  tracearr-timescale-db:
+    container_name: tracearr-timescale-db
+    hostname: tracearr-timescale-db
+    restart: $RESTART_POLICY
+    environment:
+      - POSTGRES_USER=tracearruser
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=tracearr
+    volumes:
+      - $PERSIST/tracearr/db/timescale:/home/postgres/pgdata/data
+    networks:
+      my_bridge:
+    command: postgres -c timescaledb.max_tuples_decompressed_per_dml_transaction=0 -c max_locks_per_transaction=4096 -c timescaledb.telemetry_level=off
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "tracearr", "-U", "tracearruser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    shm_size: 512mb  # Required for PostgreSQL shared memory (increase for large imports)
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536  # TimescaleDB chunks require many file descriptors
+    image: 'timescale/timescaledb-ha:pg18.1-ts2.25.0'
+
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Tracearr-Redis
+<details>
+  <summary>
+  </summary>
+
+```
+  tracearr-redis:
+    container_name: tracearr-redis
+    hostname: tracearr-redis
+    restart: $RESTART_POLICY
+    volumes:
+      - $PERSIST/tracearr/db/redis:/data
+    command: redis-server --appendonly yes
+    networks:
+      my_bridge:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    image: 'redis:alpine'
+
+```
+</details>
+
+[🔼 Back to top](#databases)
+
+
+# Transmission
+<details>
+  <summary>
+  </summary>
+
+```
+  transmission:
+    container_name: transmission
+    restart: $RESTART_POLICY
+    hostname: transmission
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - USER=admin
+      - PASS=$TRANSMISSION_PWD
+    volumes:
+      - $PERSIST/transmission:/config
+      - $DOWNLOADS:/downloads
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    networks:
+      my_bridge:
+    image: 'lscr.io/linuxserver/transmission:latest'
 ```
 </details>
 
@@ -2672,7 +3345,6 @@ services:
     ports:
       - 3001:3001
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
     network_mode: host
     image: 'louislam/uptime-kuma:latest' #alpine' CloudFlared not working (depracted)
@@ -2723,7 +3395,6 @@ services:
       my_bridge:
     user: $PUID:$PGID
     labels: 
-      autoheal: $AUTOHEAL_RESTART
       monocker.enable: $MONOCKER_ENABLE
     image: 'vaultwarden/server:alpine'
 ```
@@ -2777,6 +3448,40 @@ services:
 [🔼 Back to top](#networking-and-security)
 
 
+# VSCodium-Web
+<details>
+  <summary>
+  </summary>
+
+```
+  vscodium-web:
+    container_name: vscodium-web
+    restart: $RESTART_POLICY
+    hostname: vscodium-web
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - DEFAULT_WORKSPACE=/home/coder/project #optional
+      # - CONNECTION_TOKEN= #optional
+      # - CONNECTION_TOKEN_FILE= #optional
+      # - SUDO_PASSWORD=password #optional
+      # - SUDO_PASSWORD_HASH= #optional
+      # - CODE_ARGS= #optional
+    volumes:
+      - $PERSIST/vscodium-web:/config
+      - $PERSIST:/home/coder/project:rw
+    ports:
+      - 8000:8000
+    networks:
+      my_bridge:
+    image: 'lscr.io/linuxserver/vscodium-web:latest'
+```
+</details>
+
+[🔼 Back to top](#programming)
+
+
 # WatchTower
 <details>
   <summary>
@@ -2794,94 +3499,95 @@ services:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_LABEL_ENABLE: "false"
       WATCHTOWER_NO_STARTUP_MESSAGE: "true"
+      WATCHTOWER_LOG_LEVEL: "info"
       WATCHTOWER_WARN_ON_HEAD_FAILURE: "never"
-      WATCHTOWER_INCLUDE_STOPPED: "true"
+      WATCHTOWER_INCLUDE_STOPPED: "false" # Update stopped containers
+      WATCHTOWER_INCLUDE_RESTARTING: "true" # Restart containers after update
+      WATCHTOWER_ROLLING_RESTART: "false"
+      WATCHTOWER_LOG_FORMAT: "pretty"
       WATCHTOWER_SCHEDULE: 0 0/15 1 * * ? #Daily (?) at every 15th minute (0/15) from 0 (0) through 59 past hour 1am (1)
-      WATCHTOWER_TIMEOUT: 15
+      WATCHTOWER_TIMEOUT: 15s
       WATCHTOWER_NOTIFICATIONS_LEVEL: info
-      WATCHTOWER_NOTIFICATIONS: shoutrrr
-      WATCHTOWER_NOTIFICATION_URL: "pushover://shoutrrr:$PUSHOVER_DOCKER_UPDATES_API@$PUSHOVER_USER_KEY"
-    # volumes:
-      # - $DOCKER_SOCKET:/var/run/docker.sock
+      WATCHTOWER_NOTIFICATIONS_HOSTNAME: "My host"
     networks:
       my_bridge:
+    depends_on:
+      socket:
+        condition: service_started
     labels: 
       monocker.enable: $MONOCKER_ENABLE
-    image: 'containrrr/watchtower:latest'
+    image: 'nickfedor/watchtower:latest'
 ```
 </details>
 
 [🔼 Back to top](#docker-related)
 
 
-# WizNote
+# wDOSg
 <details>
   <summary>
+    Games can be downloaded from <a href=https://dosgames.com/> here </a href>
   </summary>
-  wiznote:
-    container_name: wiznote
+
+```
+  wdosg:
+    container_name: wdosg
     restart: $RESTART_POLICY
-    hostname: wiznote
+    hostname: wdosg
+    environment:
+      - TOKEN_SECRET=$APP_KEY
+      - TWITCH_CLIENT_ID=$TWITCH_CLIENT_ID # Your IGDB (Twitch) client ID
+      - TWITCH_CLIENT_SECRET=$TWITCH_CLIENT_SECRET #Your IGDB (Twitch) client secret
+      - EMAIL_SERVICE=gmail
+      - EMAIL_USER=$GM_USER 
+      - EMAIL_PASS=$GM_PSW
+      - SERVER_FRIENDLY_URL=https://wdosg.$DOMAINNAME
+      # - TWITCH_APP_ACCESS_TOKEN= # Your IGDB (Twitch) Token - **NOT your secret**
     volumes:
-      - $PERSIST/wiznote:/wiz/storage
-      - $LOCAL_TIME:/etc/localtime
+      - $MEDIA_PATH/Games:/app/wdosglibrary # directory containing your library
+      - $PERSIST/wdosg:/app/database # directory containing your database
     ports:
-      - 5641:80
-      - 9269:9269/udp
+      - 3003:3001
     networks:
       my_bridge:
-    image: 'wiznote/wizserver:latest'
+    image: 'soulraven1980/wdosg:latest'
 ```
 </details>
 
 [🔼 Back to top](#self-hosted)
 
 
-# YoPass
+# YTPTube
 <details>
   <summary>
   </summary>
   
 ```
-  yopass:
-    container_name: yopass
+  ytptube:
+    container_name: ytptube
+    hostname: ytptube
     restart: $RESTART_POLICY
-    hostname: yopass
-    ports:
-      - 8180:80
+    environment:
+      - TZ=$TZ
+      - YTP_INSTANCE_TITLE="MyTube"
+      - YTP_TEMP_PATH=/downloads/tmp
+      - YTP_DOWNLOAD_PATH=/downloads
+      - YTP_FLARESOLVERR_URL=http://192.168.1.11:8191/v1
+      - YTP_AUTH_USERNAME=admin
+      - YTP_AUTH_PASSWORD=$YTPTUBE_PASSWORD
     networks:
       my_bridge:
-    depends_on:
-      - yopass-memcached
-    command: --memcached=memcached:11211 --port 80
-    links:
-      - yopass-memcached:memcached
-    image: 'jhaals/yopass:latest'
+    ports:
+      - 8081:8081
+    volumes:
+      - $PERSIST/ytptube:/config:rw
+      - $DOWNLOADS/YouTube:/downloads:rw
+    user: $PUID:$PGID
+    image: 'ghcr.io/arabcoders/ytptube:latest'
 ```
 </details>
 
 [🔼 Back to top](#self-hosted)
-
-
-# Yopass-MemCached
-<details>
-  <summary>
-  </summary>
-
-```
-  yopass-memcached:
-    container_name: yopass-memcached
-    restart: $RESTART_POLICY
-    hostname: yopass-memcached
-    expose:
-      - 11211
-    networks:
-      my_bridge:
-    image: 'memcached:alpine'
-```
-</details>
-
-[🔼 Back to top](#docker-related)
 
 
 # Zigbee2MQTT
